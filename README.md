@@ -1,0 +1,3 @@
+# Aye-aye
+
+Simple AI code. Minimax and tic-tac-toe...
