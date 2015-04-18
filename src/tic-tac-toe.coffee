@@ -33,32 +33,12 @@ class TicTacToeState
   diagonals: -> b = @board; [[b[0],b[4],b[8]], [b[2],b[4],b[6]]]
   toString: -> ("|#{r.join '|'}|\n" for r in @rows()).join ''
 
-# REVERSED TIC TAC TOE
+# MISÈRE TIC TAC TOE
 
-class ReversedTicTacToeState extends TicTacToeState
+class MisereTicTacToeState extends TicTacToeState
   isWin: (who) -> super @opponent()
 
-# PLAY
-
-play = (initialState) ->
-  {playTurn} = require './minimax'
-
-  console.time 'time'
-
-  state = initialState
-  console.log state.toString()
-  while !state.isTerminal()
-    state = playTurn state
-    console.log state.toString()
-  console.log switch
-    when state.isWin X then 'X wins!'
-    when state.isWin O then 'O wins!'
-    else 'Draw!'
-
-  console.timeEnd 'time'
-
-board = [_,_,_
-         _,_,_
-         _,_,_]
-state = new TicTacToeState board, X
-play state
+module.exports =
+  _: _, X: X, O: O
+  TicTacToeState: TicTacToeState
+  MisereTicTacToeState: MisereTicTacToeState

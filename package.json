@@ -1,0 +1,37 @@
+{
+  "name": "aye-aye",
+  "version": "0.1.0",
+  "description": "Simple AI code",
+  "main": "lib/minimax.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "coffee test/tic-tac-toe-test.coffee"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jordao76/aye-aye.git"
+  },
+  "keywords": [
+    "ai",
+    "minimax",
+    "tictactoe"
+  ],
+  "author": "Rodrigo Jordao <rodrigo.jordao@gmail.com> (https://github.com/jordao76)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jordao76/aye-aye/issues"
+  },
+  "homepage": "https://github.com/jordao76/aye-aye",
+  "devDependencies": {
+    "coffee-script": "^1.9.2",
+    "del": "^1.1.1",
+    "gulp": "^3.8.11",
+    "gulp-coffee": "^2.3.1",
+    "gulp-coffeelint": "^0.4.0",
+    "gulp-load-plugins": "^0.10.0",
+    "gulp-util": "^3.0.4",
+    "run-sequence": "^1.0.2"
+  }
+}
