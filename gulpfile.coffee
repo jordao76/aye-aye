@@ -11,12 +11,17 @@ onError = (error) ->
 # build
 
 gulp.task 'lint', ->
-  gulp.src ['./gulpfile.coffee', './src/**/*.coffee']
+  gulp.src ['./gulpfile.coffee', './src/**/*.coffee', './test/**/*.coffee']
     .pipe $.coffeelint()
     .pipe $.coffeelint.reporter()
     .pipe $.coffeelint.reporter 'failOnWarning'
 
-gulp.task 'compile', ['lint'], ->
+gulp.task 'test', ['lint'], ->
+  gulp.src './test/**/*.coffee'
+    .pipe $.mocha reporter: 'nyan'
+    .on 'error', onError
+
+gulp.task 'compile', ['test'], ->
   gulp.src './src/**/*.coffee'
     .pipe $.coffee bare: yes
     .on 'error', onError
