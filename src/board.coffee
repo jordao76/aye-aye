@@ -15,7 +15,6 @@ class Board
   diagonals: -> [[@ps[0],@ps[4],@ps[8]], [@ps[2],@ps[4],@ps[6]]]
   toString: -> ("|#{r.join '|'}|" for r in @rows()).join "\n"
 
-
 module.exports =
   _: _, X: X, O: O
   Board: Board

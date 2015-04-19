@@ -59,7 +59,7 @@ describe 'minimax strategy', ->
     state.isWin(X).should.be.false
     state.isWin(O).should.be.true
 
-  xit 'Oh misère', ->
+  it 'Oh misère', ->
 
     state = new MisereTicTacToeState [O,O,X
                                       O,X,X
@@ -67,4 +67,14 @@ describe 'minimax strategy', ->
     state = playTurn state
     state.toString().should.equal """|O|O|X|
                                      |O|X|X|
-                                     | |X| |""" # unexpected play!!
+                                     | |X| |"""
+    state = playTurn state
+    state.toString().should.equal """|O|O|X|
+                                     |O|X|X|
+                                     | |X|O|"""
+    state = playTurn state
+    state.toString().should.equal """|O|O|X|
+                                     |O|X|X|
+                                     |X|X|O|"""
+    state.isWin(X).should.be.false
+    state.isWin(O).should.be.true

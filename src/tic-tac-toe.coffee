@@ -11,7 +11,7 @@ class TicTacToeState
   constructor: (@ps = empty, @nextPlayer = X, @depth = 0) -> # ps = positions
     @board = new Board(@ps)
   nextAgent: -> if @nextPlayer is X then MAX else MIN
-  opponent: -> if @nextPlayer is X then O else X
+  opponent: (who = @nextPlayer) -> if who is X then O else X
   possibleActions: ->
     _is = (i for p, i in @ps when p is _) # _is = indexes of _s
     pss = ([@ps[0...i]..., @nextPlayer, @ps[i+1..]...] for i in _is)
@@ -31,7 +31,7 @@ class TicTacToeState
 # MISÈRE TIC TAC TOE
 
 class MisereTicTacToeState extends TicTacToeState
-  isWin: (who) -> super @opponent()
+  isWin: (who) -> super @opponent who
 
 # EXPORTS
 
