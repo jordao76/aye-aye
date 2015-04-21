@@ -3,6 +3,7 @@
 
 module.exports =
 class Solver extends EventEmitter
+  constructor: (@depth = Infinity) ->
   pause: ->
     @paused = yes
     @
@@ -22,7 +23,7 @@ class Solver extends EventEmitter
       if @state.isTerminal()
         @emit 'end', @state
       else
-        @state = playTurn @state
+        @state = playTurn @state, @depth
         @emit 'progress', @state
         @play()
     @

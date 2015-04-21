@@ -1,14 +1,9 @@
 # MINIMAX
 
 # Agent :: @enum(MIN, MAX)
-
 # MAX :: Agent
 # MIN :: Agent
 [MAX, MIN] = ['MAX', 'MIN']
-
-# Agent :: {
-#   getAction :: (State) -> Action
-# }
 
 # Action :: Any
 
@@ -20,16 +15,14 @@
 #   play : Action -> State
 # }
 
-# playTurn :: (state:State) -> State
-playTurn = (state) ->
+# playTurn :: (state:State, depth:Num?) -> State
+playTurn = (state, depth = Infinity) ->
   return null if state.isTerminal()
-  minimax = new MinimaxAgent
+  minimax = new MinimaxAgent depth
   state.play minimax.getAction state
 
-utility = (state) -> state.utility()
-
 class MinimaxAgent
-  constructor: (@evaluate = utility, @depth = Infinity) ->
+  constructor: (@depth = Infinity) ->
 
   # getAction :: (state:State) -> Action
   getAction: (state) ->
@@ -38,10 +31,9 @@ class MinimaxAgent
     bestAction
 
   minimax: (state, ply = 0, α = -Infinity, β = +Infinity) ->
-    if state.nextAgent() is MAX
-      ++ply
+    ++ply if state.nextAgent() is MAX
     if ply > @depth or state.isTerminal()
-      [@evaluate state, null]
+      [state.utility(), null]
     else if state.nextAgent() is MAX
       @maxi state, ply, α, β
     else

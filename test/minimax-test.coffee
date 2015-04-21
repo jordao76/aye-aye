@@ -1,13 +1,15 @@
+# coffeelint: disable=max_line_length
+
 (require 'chai').should()
 {playTurn} = require '../src/minimax'
-{_, X, O, TicTacToeState, MisereTicTacToeState} = require '../src/tic-tac-toe'
+{_, X, O, TicTacToeState, MisereTicTacToeState, UltimateTicTacToeState} = require '../src/tic-tac-toe'
 
-play = (state) ->
+play = (state, depth = Infinity) ->
   while !state.isTerminal()
-    state = playTurn state
+    state = playTurn state, depth
   state
 
-describe 'minimax strategy', ->
+describe 'minimax strategy - tic tac toe', ->
 
   it 'should end in a draw for initial conditions', ->
 
@@ -31,19 +33,16 @@ describe 'minimax strategy', ->
                                      | | |O|"""
     state = playTurn state
     state.toString().should.equal """|X|O| |
-                                     |X|X| |
-                                     | | |O|"""
-    state = playTurn state
-    # anywhere O plays he loses, and he plays the top right position
-    # the top right is simply the first free position from left-to-right,
-    # top-to-bottom
-    state.toString().should.equal """|X|O|O|
-                                     |X|X| |
-                                     | | |O|"""
+                                     | |X| |
+                                     |X| |O|"""
     state = playTurn state
     state.toString().should.equal """|X|O|O|
-                                     |X|X|X|
-                                     | | |O|"""
+                                     | |X| |
+                                     |X| |O|"""
+    state = playTurn state
+    state.toString().should.equal """|X|O|O|
+                                     |X|X| |
+                                     |X| |O|"""
     state.isWin(X).should.be.true
     state.isWin(O).should.be.false
 
@@ -54,8 +53,8 @@ describe 'minimax strategy', ->
                                 _,_,_], O
     state = play state
     state.toString().should.equal """|O|X|X|
-                                     |O|O|O|
-                                     | | |X|"""
+                                     |O|O| |
+                                     |O| |X|"""
     state.isWin(X).should.be.false
     state.isWin(O).should.be.true
 
