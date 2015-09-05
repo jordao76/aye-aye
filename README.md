@@ -7,3 +7,7 @@ Simple AI code. Minimax and tic-tac-toe...
 ![aye-aye](http://upload.wikimedia.org/wikipedia/commons/6/6e/Aye-aye.png)
 
 Nothing to do with that lemur...
+
+## License
+
+Licensed under the [MIT license](https://github.com/jordao76/aye-aye/blob/master/LICENSE.txt).
