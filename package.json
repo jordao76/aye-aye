@@ -1,6 +1,6 @@
 {
   "name": "aye-aye",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Simple AI code",
   "main": "lib/minimax.js",
   "directories": {
