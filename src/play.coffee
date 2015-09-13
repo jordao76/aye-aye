@@ -10,6 +10,7 @@ write = (args...) -> process.stdout.write args...
 
 game = new TicTacToeState
 agent = new MinimaxAgent 3
+lastAction = null
 
 # Agent :: {
 #   nextAction : (State) -> Action
@@ -23,7 +24,13 @@ playTurn = (agent, state) ->
 
 Board::toString = ->
   sep = chalk.dim '|'
-  p = (i) => if @ps[i] is _ then chalk.dim i else chalk.bold @ps[i]
+  p = (i) =>
+    if @ps[i] is _
+      chalk.dim i
+    else if lastAction is i
+      chalk.inverse.bold @ps[i]
+    else
+      chalk.bold @ps[i]
   """#{sep}#{p 0}#{sep}#{p 1}#{sep}#{p 2}#{sep}
      #{sep}#{p 3}#{sep}#{p 4}#{sep}#{p 5}#{sep}
      #{sep}#{p 6}#{sep}#{p 7}#{sep}#{p 8}#{sep}"""
@@ -62,14 +69,15 @@ printOpenPositions = ->
 
 humanPlays = (position) ->
   if position in game.openPositions()
-    game = game.play game.makeAction position
+    lastAction = game.makeAction position
+    game = game.play lastAction
     log 'You played ' + position
   else
     log chalk.red.bold 'Invalid position ' + position
 
 computerPlays = ->
-  [action, game] = playTurn agent, game
-  log 'I played ' + action
+  [lastAction, game] = playTurn agent, game
+  log 'I played ' + lastAction
 
 printHeader()
 prompt()
