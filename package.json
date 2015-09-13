@@ -1,13 +1,10 @@
 {
   "name": "aye-aye",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Simple AI code",
   "main": "lib/minimax.js",
   "directories": {
     "test": "test"
-  },
-  "scripts": {
-    "test": "coffee test/tic-tac-toe-test.coffee"
   },
   "repository": {
     "type": "git",
@@ -35,5 +32,8 @@
     "gulp-mocha": "^2.1.3",
     "gulp-util": "^3.0.6",
     "run-sequence": "^1.1.2"
+  },
+  "dependencies": {
+    "chalk": "^1.1.1"
   }
 }

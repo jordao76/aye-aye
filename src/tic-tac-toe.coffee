@@ -11,6 +11,8 @@ class TicTacToeState
     @board = new Board(ps)
   nextAgent: -> if @nextPlayer is X then MAX else MIN
   opponent: (who = @nextPlayer) -> if who is X then O else X
+  action: (i) ->
+    new @constructor (@board.play i, @nextPlayer).ps, @opponent(), @depth + 1
   possibleActions: ->
     bs = (@board.play i, @nextPlayer for i in @openPositions())
     # the actions are the states
