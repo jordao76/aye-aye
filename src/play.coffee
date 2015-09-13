@@ -3,11 +3,12 @@
 chalk = require 'chalk'
 {_, X, O, TicTacToeState, UltimateTicTacToeState} = require './tic-tac-toe'
 {Board} = require './board'
-Solver = require './solver'
+{playTurn} = require './minimax'
 
 log = console.log
 write = (args...) -> process.stdout.write args...
-s = new Solver 3
+
+game = new TicTacToeState
 
 Board::toString = ->
   sep = chalk.dim '|'
@@ -25,66 +26,54 @@ printHeader = ->
                              \\_/ |_|\\___|   \\_/\\__,_|\\___|   \\_/\\___/ \\___|"""
   log ''
 
-printState = (state) ->
-  log state.toString()
-  log ''
-  printOpenPositions state
-
-printOpenPositions = (state) ->
-  if state.isTerminal()
-    s.resume()
-  else
-    log "#{chalk.bold state.nextPlayer} plays."
-    log "Enter a position to play: #{chalk.bold state.openPositions()}; or just <ENTER> for me to play. 'q' quits."
-    write '> '
-
-humanPlays = (position) ->
-  if position in s.state.openPositions()
-    log 'You played ' + position
-    log ''
-    s.state = s.state.play s.state.action position
-    printState s.state
-  else
-    log chalk.red.bold 'Invalid position ' + position
-    log ''
-    printState s.state
-
-computerPlays = ->
-  log ''
-  log 'I play'
-  log ''
-  console.time 'time'
-  s.resume()
-
-s.on 'start', (state) ->
-  printHeader()
-  printState state
-  s.pause()
-s.on 'progress', (newState) ->
-  console.timeEnd 'time'
-  printState newState
-  s.pause()
-s.on 'end', (state) ->
+finish = ->
   log chalk.bold switch
-    when state.isWin(X) then 'X Wins!'
-    when state.isWin(O) then 'O Wins!'
-    else 'Draw!'
+    when game.isWin(X) then 'X Wins!'
+    when game.isWin(O) then 'O Wins!'
+    when game.isTerminal() then 'Draw!'
+    else 'Goodbye...'
   log ''
   process.exit()
 
-state = new TicTacToeState
-s.solve state
+prompt = ->
+  printState()
+  write '> '
+
+printState = ->
+  log game.toString()
+  log ''
+  printOpenPositions()
+
+printOpenPositions = ->
+  finish() if game.isTerminal()
+  log "#{chalk.bold game.nextPlayer} plays."
+  log "Enter a position to play: #{chalk.bold game.openPositions()}; or just <ENTER> for me to play. 'q' quits."
+
+humanPlays = (position) ->
+  if position in game.openPositions()
+    game = game.play game.action position
+    log 'You played ' + position
+  else
+    log chalk.red.bold 'Invalid position ' + position
+
+computerPlays = ->
+  game = playTurn game, 3
+  log 'I play'
+
+printHeader()
+prompt()
 
 process.stdin.resume()
 process.stdin.setEncoding 'utf8'
-
 process.stdin.on 'data', (text) ->
+  log ''
   position = parseInt text, 10
   if Number.isInteger(position)
     humanPlays position
   else
     if text.trim().toLowerCase() in ['bye', 'exit', 'quit', 'q']
-      log 'Goodbye...'
-      process.exit()
+      finish()
     else
       computerPlays()
+  log ''
+  prompt()
