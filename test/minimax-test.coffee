@@ -1,12 +1,18 @@
 # coffeelint: disable=max_line_length
 
 (require 'chai').should()
-{playTurn} = require '../src/minimax'
+{MinimaxAgent} = require '../src/minimax'
 {_, X, O, TicTacToeState, MisereTicTacToeState, UltimateTicTacToeState} = require '../src/tic-tac-toe'
 
-play = (state, depth = Infinity) ->
+minimax = new MinimaxAgent
+
+playTurn = (state) ->
+  return null if state.isTerminal()
+  state.play minimax.nextAction state
+
+play = (state) ->
   while !state.isTerminal()
-    state = playTurn state, depth
+    state = playTurn state
   state
 
 describe 'minimax strategy - tic tac toe', ->

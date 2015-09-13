@@ -15,17 +15,11 @@
 #   play : Action -> State
 # }
 
-# playTurn :: (state:State, depth:Num?) -> State
-playTurn = (state, depth = Infinity) ->
-  return null if state.isTerminal()
-  minimax = new MinimaxAgent depth
-  state.play minimax.getAction state
-
 class MinimaxAgent
   constructor: (@depth = Infinity) ->
 
-  # getAction :: (state:State) -> Action
-  getAction: (state) ->
+  # nextAction :: (state:State) -> Action
+  nextAction: (state) ->
     return null if state.isTerminal()
     [_, bestAction] = @minimax state
     bestAction
@@ -61,4 +55,4 @@ class MinimaxAgent
       β = Math.min β, v
     [v, a]
 
-module.exports = MAX: MAX, MIN: MIN, playTurn: playTurn
+module.exports = MAX: MAX, MIN: MIN, MinimaxAgent: MinimaxAgent

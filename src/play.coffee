@@ -3,12 +3,23 @@
 chalk = require 'chalk'
 {_, X, O, TicTacToeState, UltimateTicTacToeState} = require './tic-tac-toe'
 {Board} = require './board'
-{playTurn} = require './minimax'
+{MinimaxAgent} = require './minimax'
 
 log = console.log
 write = (args...) -> process.stdout.write args...
 
 game = new TicTacToeState
+agent = new MinimaxAgent 3
+
+# Agent :: {
+#   nextAction : (State) -> Action
+# }
+
+# playTurn :: (Agent, State) -> [Action, State]
+playTurn = (agent, state) ->
+  return null if state.isTerminal()
+  action = agent.nextAction state
+  [action, state.play action]
 
 Board::toString = ->
   sep = chalk.dim '|'
@@ -51,14 +62,14 @@ printOpenPositions = ->
 
 humanPlays = (position) ->
   if position in game.openPositions()
-    game = game.play game.action position
+    game = game.play game.makeAction position
     log 'You played ' + position
   else
     log chalk.red.bold 'Invalid position ' + position
 
 computerPlays = ->
-  game = playTurn game, 3
-  log 'I play'
+  [action, game] = playTurn agent, game
+  log 'I played ' + action
 
 printHeader()
 prompt()
