@@ -1,7 +1,7 @@
 # coffeelint: disable=max_line_length
 
 chalk = require 'chalk'
-{_, X, O, TicTacToeState, UltimateTicTacToeState} = require './tic-tac-toe'
+{_, X, O, TicTacToeState} = require './tic-tac-toe'
 {Board} = require './board'
 {MinimaxAgent} = require './minimax'
 
@@ -35,6 +35,10 @@ Board::toString = ->
      #{sep}#{p 3}#{sep}#{p 4}#{sep}#{p 5}#{sep}
      #{sep}#{p 6}#{sep}#{p 7}#{sep}#{p 8}#{sep}"""
 
+TicTacToeState::parseAction = (text) -> parseInt text, 10
+
+TicTacToeState::isValidAction = (action) -> action in @openPositions()
+
 printHeader = ->
   log chalk.yellow.bold """ _____ _        _____            _____
                            |_   _(_)      |_   _|          |_   _|
@@ -54,30 +58,32 @@ finish = ->
   process.exit()
 
 prompt = ->
-  printState()
-  write '> '
-
-printState = ->
   log game.toString()
   log ''
-  printOpenPositions()
-
-printOpenPositions = ->
   finish() if game.isTerminal()
   log "#{chalk.bold game.nextPlayer} plays."
   log "Enter a position to play: #{chalk.bold game.openPositions()}; or just <ENTER> for me to play. 'q' quits."
+  write '> '
 
-humanPlays = (position) ->
-  if position in game.openPositions()
-    lastAction = game.makeAction position
-    game = game.play lastAction
-    log 'You played ' + position
-  else
-    log chalk.red.bold 'Invalid position ' + position
+humanPlays = (action) ->
+  game = game.play action
+  lastAction = action
+  log 'You played ' + lastAction.toString()
 
 computerPlays = ->
   [lastAction, game] = playTurn agent, game
   log 'I played ' + lastAction
+
+input = (text) ->
+  action = game.parseAction text
+  if game.isValidAction action
+    humanPlays action
+  else if text in ['bye', 'exit', 'quit', 'q']
+    finish()
+  else if text
+    log chalk.red.bold 'Invalid input ' + text
+  else
+    computerPlays()
 
 printHeader()
 prompt()
@@ -86,13 +92,6 @@ process.stdin.resume()
 process.stdin.setEncoding 'utf8'
 process.stdin.on 'data', (text) ->
   log ''
-  position = parseInt text, 10
-  if Number.isInteger(position)
-    humanPlays position
-  else
-    if text.trim().toLowerCase() in ['bye', 'exit', 'quit', 'q']
-      finish()
-    else
-      computerPlays()
+  input text.trim().toLowerCase()
   log ''
   prompt()

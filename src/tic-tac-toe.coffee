@@ -1,24 +1,9 @@
 # coffeelint: disable=max_line_length
 
 {MAX, MIN} = require './minimax'
-
-# TIC TAC TOE
-
 {_, X, O, empty, lines, Board, ultimateEmpty, UltimateBoard} = require './board'
 
-class TicTacToeState
-  constructor: (ps = empty, @nextPlayer = X, @depth = 0) ->
-    @board = new Board(ps)
-  nextAgent: -> if @nextPlayer is X then MAX else MIN
-  opponent: (who = @nextPlayer) -> if who is X then O else X
-  makeAction: (i) -> i
-  possibleActions: -> @openPositions()
-  play: (action) -> new @constructor (@board.play action, @nextPlayer).ps, @opponent(), @depth + 1
-  utility: -> ticTacToeEvaluate @board
-  openPositions: -> @board.openPositions()
-  isTerminal: -> @board.isTerminal()
-  isWin: (who) -> @board.isWin who
-  toString: -> @board.toString()
+# TIC TAC TOE
 
 ticTacToeEvaluate = (board) ->
   ls = lines board.ps
@@ -31,6 +16,15 @@ ticTacToeEvaluate = (board) ->
     score += 10**x - 10**o if x is 0 or o is 0
   score
 
+class TicTacToeState extends Board
+  constructor: (ps = empty, @nextPlayer = X, @depth = 0) -> super ps
+  nextAgent: -> if @nextPlayer is X then MAX else MIN
+  possibleActions: -> @openPositions()
+  play: (i) ->
+    new @constructor (super i, @nextPlayer).ps, @opponent(), @depth + 1
+  utility: -> ticTacToeEvaluate @
+  opponent: (who = @nextPlayer) -> if who is X then O else X
+
 # MISÈRE TIC TAC TOE
 
 class MisereTicTacToeState extends TicTacToeState
@@ -39,10 +33,21 @@ class MisereTicTacToeState extends TicTacToeState
 
 # ULTIMATE TIC TAC TOE
 
-class UltimateTicTacToeState extends TicTacToeState
+class UltimateTicTacToeState extends UltimateBoard
 
-  constructor: (@bs = ultimateEmpty, @nextPlayer = X, @lastPlayedPosition = 4, @depth = 0) ->
-    @board = new UltimateBoard(@bs)
+  constructor: (bs = ultimateEmpty, @nextPlayer = X, @lastPlayedPosition = 4, @depth = 0) ->
+    super bs
+
+  nextAgent: -> if @nextPlayer is X then MAX else MIN
+  opponent: (who = @nextPlayer) -> if who is X then O else X
+
+  openPositions: ->
+    # get open positions for the boards
+    # returns :: list of [board index, list of open positions for board]
+    ([i, @bs[i].openPositions()] for i in @boardsForNextPlay())
+
+  play: ([i, j]) ->
+    new @constructor super(i, j, @nextPlayer).bs, @opponent(), j, @depth + 1
 
   # get boards for next play, returns :: list of board indexes
   boardsForNextPlay: ->
@@ -55,22 +60,10 @@ class UltimateTicTacToeState extends TicTacToeState
       (i for b, i in @bs when !b.isTerminal())
 
   possibleActions: ->
-    # bis :: list of board indexes
-    bis = @boardsForNextPlay()
-
-    # get open positions for the boards
-    # iopss :: list of [board index, list of open positions]
-    iopss = ([i, @bs[i].openPositions()] for i in bis)
-
-    # the actions are the states
-    states = []
-    for [i, ops] in iopss
-      for j in ops
-        states.push new @constructor @board.play(i, j, @nextPlayer).bs, @opponent(), j, @depth + 1
-    states
+    ([i, j] for j in js for [i, js] in @openPositions()).reduce (l, r) -> l.concat r
 
   utility: ->
-    ls = lines @board.bs
+    ls = lines @bs
     score = 0
     for l in ls
       [i, j, k] = [0, 0, 0]
