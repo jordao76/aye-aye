@@ -1,8 +1,7 @@
 # coffeelint: disable=max_line_length
 
 chalk = require 'chalk'
-{Board} = require './board'
-{_, X, O, TicTacToeState} = require './tic-tac-toe'
+{_, X, O, Board, TicTacToeState} = require './tic-tac-toe'
 {MinimaxAgent} = require '../minimax'
 
 log = console.log
@@ -72,7 +71,7 @@ humanPlays = (action) ->
 
 computerPlays = ->
   [lastAction, game] = playTurn agent, game
-  log 'I played ' + lastAction
+  log 'I played ' + lastAction.toString()
 
 input = (text) ->
   action = game.parseAction text

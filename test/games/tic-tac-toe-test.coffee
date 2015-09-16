@@ -1,5 +1,5 @@
 (require 'chai').should()
-{_, X, O, Board, UltimateBoard} = require '../../src/games/board'
+{_, X, O, Board} = require '../../src/games/tic-tac-toe'
 
 # game in progress
 g = [O,_,_
@@ -66,6 +66,10 @@ describe 'Board', ->
     new Board(x).isTerminal().should.be.true
 
     new Board(o).isTerminal().should.be.true
+
+# -------------------------------------------------------
+
+{UltimateBoard} = require '../../src/games/ultimate-tic-tac-toe'
 
 describe 'UltimateBoard', ->
 

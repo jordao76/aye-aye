@@ -55,4 +55,4 @@ class MinimaxAgent
       β = Math.min β, v
     [v, a]
 
-module.exports = MAX: MAX, MIN: MIN, MinimaxAgent: MinimaxAgent
+module.exports = { MAX, MIN, MinimaxAgent }
