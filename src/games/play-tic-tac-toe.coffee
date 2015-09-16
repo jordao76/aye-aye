@@ -1,9 +1,9 @@
 # coffeelint: disable=max_line_length
 
 chalk = require 'chalk'
-{_, X, O, TicTacToeState} = require './tic-tac-toe'
 {Board} = require './board'
-{MinimaxAgent} = require './minimax'
+{_, X, O, TicTacToeState} = require './tic-tac-toe'
+{MinimaxAgent} = require '../minimax'
 
 log = console.log
 write = (args...) -> process.stdout.write args...

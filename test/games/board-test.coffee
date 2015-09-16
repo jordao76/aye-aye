@@ -1,5 +1,5 @@
 (require 'chai').should()
-{_, X, O, Board, UltimateBoard} = require '../src/board'
+{_, X, O, Board, UltimateBoard} = require '../../src/games/board'
 
 # game in progress
 g = [O,_,_

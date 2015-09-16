@@ -2,7 +2,7 @@
 
 (require 'chai').should()
 {MinimaxAgent} = require '../src/minimax'
-{_, X, O, TicTacToeState, MisereTicTacToeState} = require '../src/tic-tac-toe'
+{_, X, O, TicTacToeState, MisereTicTacToeState} = require '../src/games/tic-tac-toe'
 
 minimax = new MinimaxAgent
 

@@ -1,6 +1,6 @@
 # coffeelint: disable=max_line_length
 
-{MAX, MIN} = require './minimax'
+{MAX, MIN} = require '../minimax'
 {_, X, O, empty, lines, Board, ultimateEmpty, UltimateBoard} = require './board'
 
 # TIC TAC TOE
@@ -60,7 +60,11 @@ class UltimateTicTacToeState extends UltimateBoard
       (i for b, i in @bs when !b.isTerminal())
 
   possibleActions: ->
-    ([i, j] for j in js for [i, js] in @openPositions()).reduce (l, r) -> l.concat r
+    res = []
+    for [i, js] in @openPositions()
+      for j in js
+        res.push [i, j]
+    res
 
   utility: ->
     ls = lines @bs

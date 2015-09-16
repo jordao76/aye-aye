@@ -20,7 +20,7 @@ $ npm install
 ...
 $ node_modules/.bin/gulp
 ...
-$ node lib/play.js
+$ node lib/games/play-tic-tac-toe.js
 ```
 
 You'll need [node.js](https://nodejs.org/en/).
