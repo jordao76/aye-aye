@@ -3,103 +3,103 @@
 (require 'chai').should()
 {MAX, MIN, MinimaxAgent} = require '../src/minimax'
 
+node = (utility, children = null) -> (next) ->
+  isTerminal: -> !children?
+  opponent: -> if next is MAX then MIN else MAX
+  nextAgent: -> next
+  possibleActions: -> [0...children.length]
+  play: (i) -> children[i] @opponent()
+  utility: -> utility
+
 describe 'minimax strategy for 2-level tree', ->
 
   agent = new MinimaxAgent
 
-  # this it the tree in this example (utilities are after the colon)
-  # ── initialState
-  #   ├── maxState: 10
-  #   └── minState: -10
-
-  initialState =
-    isTerminal: -> no
-    possibleActions: -> ['MAX wins', 'MIN wins']
-    play: (a) -> if a is 'MAX wins' then maxState else minState
-  maxState =
-    isTerminal: -> yes
-    utility: -> 10
-  minState =
-    isTerminal: -> yes
-    utility: -> -10
+  root =
+    node 0, [
+      (node 10),
+      (node -10)
+    ]
 
   it 'should maximize for MAX', ->
-    initialState.nextAgent = -> MAX
-    [utility, action] = agent.minimax initialState
-    action.should.equal 'MAX wins'
+    [utility, action] = agent.minimax root MAX
+    action.should.equal 0
     utility.should.equal 10
 
   it 'should minimize for MIN', ->
-    initialState.nextAgent = -> MIN
-    [utility, action] = agent.minimax initialState
-    action.should.equal 'MIN wins'
+    [utility, action] = agent.minimax root MIN
+    action.should.equal 1
     utility.should.equal -10
 
 describe 'minimax strategy for 3-level tree', ->
 
   agent = new MinimaxAgent
 
-  # this it the tree in this example (actions are in parens, utilities after the colon)
-  # ── initialState
-  #   ├── (1) state1
-  #   │   ├── (1) terminal : 10
-  #   │   └── (2) terminal : -100
-  #   └── (2) state2
-  #       ├── (1) terminal : -10
-  #       └── (2) terminal : 100
-
-  initialState = (next) ->
-    isTerminal: -> no
-    nextAgent: -> next
-    possibleActions: -> [1, 2]
-    opponent: -> if next is MAX then MIN else MAX
-    play: (a) -> if a is 1 then state1 @opponent() else state2 @opponent()
-  state1 = (next) ->
-    isTerminal: -> no
-    nextAgent: -> next
-    possibleActions: -> [1, 2]
-    play: (a) -> terminal if a is 1 then 10 else -100
-  state2 = (next) ->
-    isTerminal: -> no
-    nextAgent: -> next
-    possibleActions: -> [1, 2]
-    play: (a) -> terminal if a is 1 then -10 else 100
-  terminal = (u) ->
-    isTerminal: -> yes
-    utility: -> u
+  root =
+    node 0, [
+      node 0, [
+        (node 10),
+        (node -100)
+      ]
+      node 0, [
+        (node -10),
+        (node 100)
+      ]
+    ]
 
   it 'should maximize for MAX', ->
-    [utility, action] = agent.minimax initialState MAX
-    action.should.equal 2
+    [utility, action] = agent.minimax root MAX
+    action.should.equal 1
     utility.should.equal -10 # this is the best MAX can make
 
   it 'should minimize for MIN', ->
-    [utility, action] = agent.minimax initialState MIN
-    action.should.equal 1
+    [utility, action] = agent.minimax root MIN
+    action.should.equal 0
     utility.should.equal 10 # this is the best MIN can make
 
-  describe 'from state1', ->
+describe 'minimax strategy with α-β pruning', ->
 
-    it 'should maximize for MAX', ->
-      [utility, nextAction] = agent.minimax state1 MAX
-      nextAction.should.equal 1
-      utility.should.equal 10
+  agent = new MinimaxAgent
 
-    it 'should minimize for MIN', ->
-      [utility, nextAction] = agent.minimax state1 MIN
-      nextAction.should.equal 2
-      utility.should.equal -100
+  fail = -> throw new Error
+  root =
+    node 0, [
+      node 0, [
+        (node 3),
+        (node 12)
+      ]
+      node 0, [
+        (node 2),
+        # this next node should not be visited, since because of the 2,
+        # this whole branch of the tree would never be chosen by MAX,
+        # which prefers the other branch (where MIN would pick 3);
+        # i.e. after the 2, it can only get worse for MAX (< 2), but not
+        # better, since MIN won't pick any values > 2
+        fail
+      ]
+    ]
 
-  describe 'from state2', ->
+  it 'should prune unnecessary searches', ->
+    [utility, action] = agent.minimax root MAX
+    action.should.equal 0
+    utility.should.equal 3
 
-    it 'should maximize for MAX', ->
-      [utility, nextAction] = agent.minimax state2 MAX
-      nextAction.should.equal 2
-      utility.should.equal 100
+describe 'minimax depth limited search', ->
 
-    it 'should minimize for MIN', ->
-      [utility, nextAction] = agent.minimax state2 MIN
-      nextAction.should.equal 1
-      utility.should.equal -10
+  agent = new MinimaxAgent 1 # search to depth of 1 ply
 
-# TODO: pruning
+  # plies start at zero and change at MAX's turns
+  root =
+    node 1, [         # (MAX) ply = 0
+      node 2, [       # (MIN)
+        node 3, [     # (MAX) ply = 1 <===== desired depth
+          node 4, [   # (MIN)
+            node 5    # (MAX) ply = 2
+          ]
+        ]
+      ]
+    ]
+
+  it 'should stop at the desired depth', ->
+    [utility, action] = agent.minimax root MAX
+    utility.should.equal 3
