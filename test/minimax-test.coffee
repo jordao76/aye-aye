@@ -5,7 +5,7 @@
 
 describe 'minimax strategy for 2-level tree', ->
 
-  minimax = new MinimaxAgent
+  agent = new MinimaxAgent
 
   # this it the tree in this example (utilities are after the colon)
   # ── initialState
@@ -25,17 +25,19 @@ describe 'minimax strategy for 2-level tree', ->
 
   it 'should maximize for MAX', ->
     initialState.nextAgent = -> MAX
-    nextAction = minimax.nextAction initialState
-    nextAction.should.equal 'MAX wins'
+    [utility, action] = agent.minimax initialState
+    action.should.equal 'MAX wins'
+    utility.should.equal 10
 
   it 'should minimize for MIN', ->
     initialState.nextAgent = -> MIN
-    nextAction = minimax.nextAction initialState
-    nextAction.should.equal 'MIN wins'
+    [utility, action] = agent.minimax initialState
+    action.should.equal 'MIN wins'
+    utility.should.equal -10
 
 describe 'minimax strategy for 3-level tree', ->
 
-  minimax = new MinimaxAgent
+  agent = new MinimaxAgent
 
   # this it the tree in this example (actions are in parens, utilities after the colon)
   # ── initialState
@@ -51,45 +53,53 @@ describe 'minimax strategy for 3-level tree', ->
     nextAgent: -> next
     possibleActions: -> [1, 2]
     opponent: -> if next is MAX then MIN else MAX
-    play: (a) -> if a is 1 then state1(@opponent()) else state2(@opponent())
+    play: (a) -> if a is 1 then state1 @opponent() else state2 @opponent()
   state1 = (next) ->
     isTerminal: -> no
     nextAgent: -> next
     possibleActions: -> [1, 2]
-    play: (a) -> terminal(if a is 1 then 10 else -100)
+    play: (a) -> terminal if a is 1 then 10 else -100
   state2 = (next) ->
     isTerminal: -> no
     nextAgent: -> next
     possibleActions: -> [1, 2]
-    play: (a) -> terminal(if a is 1 then -10 else 100)
+    play: (a) -> terminal if a is 1 then -10 else 100
   terminal = (u) ->
     isTerminal: -> yes
     utility: -> u
 
   it 'should maximize for MAX', ->
-    nextAction = minimax.nextAction initialState(MAX)
-    nextAction.should.equal 2
+    [utility, action] = agent.minimax initialState MAX
+    action.should.equal 2
+    utility.should.equal -10 # this is the best MAX can make
 
   it 'should minimize for MIN', ->
-    nextAction = minimax.nextAction initialState(MIN)
-    nextAction.should.equal 1
+    [utility, action] = agent.minimax initialState MIN
+    action.should.equal 1
+    utility.should.equal 10 # this is the best MIN can make
 
   describe 'from state1', ->
 
     it 'should maximize for MAX', ->
-      nextAction = minimax.nextAction state1(MAX)
+      [utility, nextAction] = agent.minimax state1 MAX
       nextAction.should.equal 1
+      utility.should.equal 10
 
     it 'should minimize for MIN', ->
-      nextAction = minimax.nextAction state1(MIN)
+      [utility, nextAction] = agent.minimax state1 MIN
       nextAction.should.equal 2
+      utility.should.equal -100
 
   describe 'from state2', ->
 
     it 'should maximize for MAX', ->
-      nextAction = minimax.nextAction state2(MAX)
+      [utility, nextAction] = agent.minimax state2 MAX
       nextAction.should.equal 2
+      utility.should.equal 100
 
     it 'should minimize for MIN', ->
-      nextAction = minimax.nextAction state2(MIN)
+      [utility, nextAction] = agent.minimax state2 MIN
       nextAction.should.equal 1
+      utility.should.equal -10
+
+# TODO: pruning
