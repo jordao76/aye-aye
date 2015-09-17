@@ -1,85 +1,95 @@
 # coffeelint: disable=max_line_length
 
 (require 'chai').should()
-{MinimaxAgent} = require '../src/minimax'
-{_, X, O, TicTacToeState, MisereTicTacToeState} = require '../src/games/tic-tac-toe'
+{MAX, MIN, MinimaxAgent} = require '../src/minimax'
 
-minimax = new MinimaxAgent
+describe 'minimax strategy for 2-level tree', ->
 
-playTurn = (state) ->
-  return null if state.isTerminal()
-  state.play minimax.nextAction state
+  minimax = new MinimaxAgent
 
-play = (state) ->
-  while !state.isTerminal()
-    state = playTurn state
-  state
+  # this it the tree in this example (utilities are after the colon)
+  # ── initialState
+  #   ├── maxState: 10
+  #   └── minState: -10
 
-describe 'minimax strategy - tic tac toe', ->
+  initialState =
+    isTerminal: -> no
+    possibleActions: -> ['MAX wins', 'MIN wins']
+    play: (a) -> if a is 'MAX wins' then maxState else minState
+  maxState =
+    isTerminal: -> yes
+    utility: -> 10
+  minState =
+    isTerminal: -> yes
+    utility: -> -10
 
-  it 'should end in a draw for initial conditions', ->
+  it 'should maximize for MAX', ->
+    initialState.nextAgent = -> MAX
+    nextAction = minimax.nextAction initialState
+    nextAction.should.equal 'MAX wins'
 
-    state = new TicTacToeState
-    state = play state
-    state.isWin(X).should.be.false
-    state.isWin(O).should.be.false
+  it 'should minimize for MIN', ->
+    initialState.nextAgent = -> MIN
+    nextAction = minimax.nextAction initialState
+    nextAction.should.equal 'MIN wins'
 
-  it 'X should win given the right conditions', ->
+describe 'minimax strategy for 3-level tree', ->
 
-    state = new TicTacToeState [_,O,_
-                                _,X,_
-                                _,_,_], X
-    state = playTurn state
-    state.toString().should.equal """|X|O| |
-                                     | |X| |
-                                     | | | |"""
-    state = playTurn state
-    state.toString().should.equal """|X|O| |
-                                     | |X| |
-                                     | | |O|"""
-    state = playTurn state
-    state.toString().should.equal """|X|O| |
-                                     | |X| |
-                                     |X| |O|"""
-    state = playTurn state
-    state.toString().should.equal """|X|O|O|
-                                     | |X| |
-                                     |X| |O|"""
-    state = playTurn state
-    state.toString().should.equal """|X|O|O|
-                                     |X|X| |
-                                     |X| |O|"""
-    state.isWin(X).should.be.true
-    state.isWin(O).should.be.false
+  minimax = new MinimaxAgent
 
-  it 'O should win given the right conditions', ->
+  # this it the tree in this example (actions are in parens, utilities after the colon)
+  # ── initialState
+  #   ├── (1) state1
+  #   │   ├── (1) terminal : 10
+  #   │   └── (2) terminal : -100
+  #   └── (2) state2
+  #       ├── (1) terminal : -10
+  #       └── (2) terminal : 100
 
-    state = new TicTacToeState [_,X,_
-                                _,O,_
-                                _,_,_], O
-    state = play state
-    state.toString().should.equal """|O|X|X|
-                                     |O|O| |
-                                     |O| |X|"""
-    state.isWin(X).should.be.false
-    state.isWin(O).should.be.true
+  initialState = (next) ->
+    isTerminal: -> no
+    nextAgent: -> next
+    possibleActions: -> [1, 2]
+    opponent: -> if next is MAX then MIN else MAX
+    play: (a) -> if a is 1 then state1(@opponent()) else state2(@opponent())
+  state1 = (next) ->
+    isTerminal: -> no
+    nextAgent: -> next
+    possibleActions: -> [1, 2]
+    play: (a) -> terminal(if a is 1 then 10 else -100)
+  state2 = (next) ->
+    isTerminal: -> no
+    nextAgent: -> next
+    possibleActions: -> [1, 2]
+    play: (a) -> terminal(if a is 1 then -10 else 100)
+  terminal = (u) ->
+    isTerminal: -> yes
+    utility: -> u
 
-  it 'Oh misère', ->
+  it 'should maximize for MAX', ->
+    nextAction = minimax.nextAction initialState(MAX)
+    nextAction.should.equal 2
 
-    state = new MisereTicTacToeState [O,O,X
-                                      O,X,X
-                                      _,_,_], X
-    state = playTurn state
-    state.toString().should.equal """|O|O|X|
-                                     |O|X|X|
-                                     | |X| |"""
-    state = playTurn state
-    state.toString().should.equal """|O|O|X|
-                                     |O|X|X|
-                                     | |X|O|"""
-    state = playTurn state
-    state.toString().should.equal """|O|O|X|
-                                     |O|X|X|
-                                     |X|X|O|"""
-    state.isWin(X).should.be.false
-    state.isWin(O).should.be.true
+  it 'should minimize for MIN', ->
+    nextAction = minimax.nextAction initialState(MIN)
+    nextAction.should.equal 1
+
+  describe 'from state1', ->
+
+    it 'should maximize for MAX', ->
+      nextAction = minimax.nextAction state1(MAX)
+      nextAction.should.equal 1
+
+    it 'should minimize for MIN', ->
+      nextAction = minimax.nextAction state1(MIN)
+      nextAction.should.equal 2
+
+  describe 'from state2', ->
+
+    it 'should maximize for MAX', ->
+      nextAction = minimax.nextAction state2(MAX)
+      nextAction.should.equal 2
+
+    it 'should minimize for MIN', ->
+      nextAction = minimax.nextAction state2(MIN)
+      nextAction.should.equal 1

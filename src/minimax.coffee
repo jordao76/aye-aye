@@ -25,7 +25,7 @@ class MinimaxAgent
     bestAction
 
   minimax: (state, ply = 0, α = -Infinity, β = +Infinity) ->
-    ++ply if state.nextAgent() is MAX
+    ++ply if not state.isTerminal() and state.nextAgent() is MAX
     if ply > @depth or state.isTerminal()
       [state.utility(), null]
     else if state.nextAgent() is MAX
