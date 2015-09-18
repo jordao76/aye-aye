@@ -1,5 +1,7 @@
+# coffeelint: disable=max_line_length
+
 (require 'chai').should()
-{_, X, O, Board} = require '../../src/games/tic-tac-toe'
+{_, X, O, empty, rows, columns, diagonals, lines, Board} = require '../../src/games/tic-tac-toe'
 
 # game in progress
 g = [O,_,_
@@ -18,25 +20,59 @@ o = [X,X,O
      _,O,_
      O,_,X]
 
+describe 'board position operations', ->
+
+  # board positions are stored as a 1D array that's treated as a
+  # 2D tic-tac-toe board
+
+  describe 'rows', ->
+    it 'should break the board into its rows', ->
+      rows([1,2,3
+            4,5,6
+            7,8,9]).should.deep.equal [[1,2,3]
+                                       [4,5,6]
+                                       [7,8,9]]
+  describe 'columns', ->
+    it 'should break the board into its columns', ->
+      columns([1,2,3
+               4,5,6
+               7,8,9]).should.deep.equal [[1,4,7]
+                                          [2,5,8]
+                                          [3,6,9]]
+
+  describe 'diagonals', ->
+    it 'should break the board into its diagonals', ->
+      diagonals([1,2,3
+                 4,5,6
+                 7,8,9]).should.deep.equal [[1,5,9]
+                                            [3,5,7]]
+
+  describe 'lines', ->
+    it 'should break the board into its winning-prone lines (rows + columns + diagonals)', ->
+      lines([1,2,3
+             4,5,6
+             7,8,9]).should.deep.equal [[1,2,3]
+                                        [4,5,6]
+                                        [7,8,9]
+                                        [1,4,7]
+                                        [2,5,8]
+                                        [3,6,9]
+                                        [1,5,9]
+                                        [3,5,7]]
+
 describe 'Board', ->
 
-  it 'toString should represent the board as a string', ->
+  it 'isTerminal should return if the game is over', ->
 
-    new Board().toString().should.equal """| | | |
-                                           | | | |
-                                           | | | |"""
+    new Board().isTerminal().should.be.false
 
-    new Board([X,O,X
-               O,X,O
-               X,O,X]).toString().should.equal """|X|O|X|
-                                                  |O|X|O|
-                                                  |X|O|X|"""
+    new Board(g).isTerminal().should.be.false
 
-    new Board([1,2,3
-               4,5,6
-               7,8,9]).toString().should.equal """|1|2|3|
-                                                  |4|5|6|
-                                                  |7|8|9|"""
+    new Board(d).isTerminal().should.be.true
+
+    new Board(x).isTerminal().should.be.true
+
+    new Board(o).isTerminal().should.be.true
 
   it 'isWin should find out if a player won', ->
 
@@ -55,17 +91,55 @@ describe 'Board', ->
     new Board(d).isWin(X).should.be.false
     new Board(d).isWin(O).should.be.false
 
-  it 'isTerminal should return if the game is over', ->
+  it 'isFull should indicate if the board is full', ->
 
-    new Board().isTerminal().should.be.false
+    new Board().isFull().should.be.false
+    new Board(g).isFull().should.be.false
+    new Board(d).isFull().should.be.true
 
-    new Board(g).isTerminal().should.be.false
+  it 'openPositions should return all open position indexes in an array', ->
 
-    new Board(d).isTerminal().should.be.true
+    new Board().openPositions().should.deep.equal [0,1,2,3,4,5,6,7,8]
+    new Board(d).openPositions().should.deep.equal []
+    new Board(g).openPositions().should.deep.equal [1,2,3,5,6,7,8]
 
-    new Board(x).isTerminal().should.be.true
+  it 'mark should mark the board with a new play (returned as a new board)', ->
 
-    new Board(o).isTerminal().should.be.true
+    new Board().mark(4,X).ps.should.deep.equal [_,_,_
+                                                _,X,_
+                                                _,_,_]
+
+    new Board().
+      mark(4,X).
+      mark(0,O).
+      mark(1,X).
+      mark(7,O).
+      mark(5,X).
+      ps.should.deep.equal [O,X,_
+                            _,X,X
+                            _,O,_]
+
+    board = new Board
+    board.mark(4,X) # mark creates a new board
+    board.ps.should.deep.equal empty # the original is not changed
+
+  it 'toString should represent the board as a string', ->
+
+    new Board().toString().should.equal """| | | |
+                                           | | | |
+                                           | | | |"""
+
+    new Board([X,O,X
+               O,X,O
+               X,O,X]).toString().should.equal """|X|O|X|
+                                                  |O|X|O|
+                                                  |X|O|X|"""
+
+    new Board([1,2,3
+               4,5,6
+               7,8,9]).toString().should.equal """|1|2|3|
+                                                  |4|5|6|
+                                                  |7|8|9|"""
 
 # -------------------------------------------------------
 

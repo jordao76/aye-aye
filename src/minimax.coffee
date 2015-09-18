@@ -1,8 +1,5 @@
 # MINIMAX
 
-# Agent :: @enum(MIN, MAX)
-# MAX :: Agent
-# MIN :: Agent
 [MAX, MIN] = ['MAX', 'MIN']
 
 # Action :: Any
@@ -20,7 +17,6 @@ class MinimaxAgent
 
   # nextAction :: (state:State) -> Action
   nextAction: (state) ->
-    return null if state.isTerminal()
     [_, bestAction] = @minimax state
     bestAction
 

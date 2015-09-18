@@ -1,7 +1,7 @@
-rows = (ps) -> ([ps[i],ps[i+1],ps[i+2]] for i in [0..8] by 3)
-columns = (ps) -> ([ps[i],ps[i+3],ps[i+6]] for i in [0..2])
-diagonals = (ps) -> [[ps[0],ps[4],ps[8]], [ps[2],ps[4],ps[6]]]
-lines = (ps) -> [rows(ps)..., columns(ps)..., diagonals(ps)...]
+rows = (a) -> (a[i...i+3] for i in [0...3*3] by 3)
+columns = (a) -> ([a[i],a[i+3],a[i+6]] for i in [0...3])
+diagonals = (a) -> [[a[0],a[4],a[8]], [a[2],a[4],a[6]]]
+lines = (a) -> [rows(a)..., columns(a)..., diagonals(a)...]
 
 # -------------------------------------------------------
 
@@ -16,7 +16,7 @@ class Board
   isWin: (who) -> lines(@ps).some (l) -> l.every (p) -> p is who
   isFull: -> @ps.every (p) -> p isnt _
   openPositions: -> (i for p, i in @ps when p is _)
-  play: (i, who) -> new @constructor [@ps[0...i]..., who, @ps[i+1..]...]
+  mark: (i, who) -> new @constructor [@ps[0...i]..., who, @ps[i+1..]...]
   toString: -> ("|#{r.join '|'}|" for r in rows(@ps)).join "\n"
 
 # -------------------------------------------------------
@@ -27,8 +27,10 @@ class TicTacToeState extends Board
   constructor: (ps = empty, @nextPlayer = X, @depth = 0) -> super ps
   nextAgent: -> if @nextPlayer is X then MAX else MIN
   possibleActions: -> @openPositions()
+    #bs = (@mark i, @nextPlayer for i in @openPositions())
+    #canonicalize b for b in bs # TODO: remove duplicates
   play: (i) ->
-    new @constructor (super i, @nextPlayer).ps, @opponent(), @depth + 1
+    new @constructor (@mark i, @nextPlayer).ps, @opponent(), @depth + 1
   utility: -> ticTacToeEvaluate @
   opponent: (who = @nextPlayer) -> if who is X then O else X
 
