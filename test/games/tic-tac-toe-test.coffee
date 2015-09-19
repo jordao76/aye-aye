@@ -103,25 +103,23 @@ describe 'Board', ->
     new Board(d).openPositions().should.deep.equal []
     new Board(g).openPositions().should.deep.equal [1,2,3,5,6,7,8]
 
-  it 'mark should mark the board with a new play (returned as a new board)', ->
+  it 'mark should mark the board with a new play (returned as a new array of positions)', ->
 
-    new Board().mark(4,X).ps.should.deep.equal [_,_,_
-                                                _,X,_
-                                                _,_,_]
+    new Board().mark(4,X).should.deep.equal [_,_,_
+                                             _,X,_
+                                             _,_,_]
+
+  it 'play should mark the board with a new play (returned as a new board)', ->
 
     new Board().
-      mark(4,X).
-      mark(0,O).
-      mark(1,X).
-      mark(7,O).
-      mark(5,X).
+      play(4,X).
+      play(0,O).
+      play(1,X).
+      play(7,O).
+      play(5,X).
       ps.should.deep.equal [O,X,_
                             _,X,X
                             _,O,_]
-
-    board = new Board
-    board.mark(4,X) # mark creates a new board
-    board.ps.should.deep.equal empty # the original is not changed
 
   it 'toString should represent the board as a string', ->
 
@@ -140,6 +138,79 @@ describe 'Board', ->
                7,8,9]).toString().should.equal """|1|2|3|
                                                   |4|5|6|
                                                   |7|8|9|"""
+
+# -------------------------------------------------------
+
+{bin, rotate, rotations, flip, symmetries, canonicalize, canonicalizeN} = require '../../src/games/tic-tac-toe'
+
+describe 'canonicalization operations', ->
+
+  describe 'rotate', ->
+    it 'should rotate a board clockwise', ->
+      rotate([1,2,3
+              4,5,6
+              7,8,9]).should.deep.equal [7,4,1
+                                         8,5,2
+                                         9,6,3]
+  describe 'rotations', ->
+    it 'should return all rotations of a board', ->
+      rotations([1,2,3
+                 4,5,6
+                 7,8,9]).should.deep.equal [[1,2,3
+                                             4,5,6
+                                             7,8,9]
+                                            [7,4,1
+                                             8,5,2
+                                             9,6,3]
+                                            [9,8,7
+                                             6,5,4
+                                             3,2,1]
+                                            [3,6,9
+                                             2,5,8
+                                             1,4,7]]
+  describe 'flip', ->
+    it 'should flip a board horizontally', ->
+      flip([1,2,3
+            4,5,6
+            7,8,9]).should.deep.equal [3,2,1
+                                       6,5,4
+                                       9,8,7]
+  describe 'symmetries', ->
+    it 'should return all rotations and flipped rotations', ->
+      symmetries([1,2,3
+                  4,5,6
+                  7,8,9]).should.deep.equal [[1,2,3
+                                              4,5,6
+                                              7,8,9]
+                                             [7,4,1
+                                              8,5,2
+                                              9,6,3]
+                                             [9,8,7
+                                              6,5,4
+                                              3,2,1]
+                                             [3,6,9
+                                              2,5,8
+                                              1,4,7]
+                                             [3,2,1
+                                              6,5,4
+                                              9,8,7]
+                                             [9,6,3
+                                              8,5,2
+                                              7,4,1]
+                                             [7,8,9
+                                              4,5,6
+                                              1,2,3]
+                                             [1,4,7
+                                              2,5,8
+                                              3,6,9]]
+  describe 'canonicalize', ->
+    it 'should return the same representation for all symmetries of a board', ->
+      board = [_,O,X
+               O,X,X
+               _,_,O]
+      c = canonicalize board
+      ss = symmetries board
+      (canonicalize s).should.deep.equal c for s in ss
 
 # -------------------------------------------------------
 

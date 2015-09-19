@@ -22,20 +22,22 @@ playTurn = (agent, state) ->
   [action, state.play action]
 
 Board::toString = ->
-  sep = chalk.dim '|'
+  v = chalk.dim '|'
+  h = chalk.dim '-----------'
   p = (i) =>
     if @ps[i] is _
       chalk.dim i
-    else if lastAction is i
+    else if lastAction.i is i
       chalk.inverse.bold @ps[i]
     else
       chalk.bold @ps[i]
-  """#{sep}#{p 0}#{sep}#{p 1}#{sep}#{p 2}#{sep}
-     #{sep}#{p 3}#{sep}#{p 4}#{sep}#{p 5}#{sep}
-     #{sep}#{p 6}#{sep}#{p 7}#{sep}#{p 8}#{sep}"""
+  """ #{p 0} #{v} #{p 1} #{v} #{p 2}
+      #{h}
+       #{p 3} #{v} #{p 4} #{v} #{p 5}
+      #{h}
+       #{p 6} #{v} #{p 7} #{v} #{p 8}"""
 
 TicTacToeState::parseAction = (text) -> parseInt text, 10
-
 TicTacToeState::isValidAction = (action) -> action in @openPositions()
 
 printHeader = ->
@@ -64,7 +66,8 @@ prompt = ->
   log "Enter a position to play: #{chalk.bold game.openPositions()}; or just <ENTER> for me to play. 'q' quits."
   write '> '
 
-humanPlays = (action) ->
+humanPlays = (i) ->
+  action = game.action i
   game = game.play action
   lastAction = action
   log 'You played ' + lastAction.toString()
