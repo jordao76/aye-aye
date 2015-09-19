@@ -264,19 +264,20 @@ describe 'UltimateBoard', ->
 
     new UltimateBoard(bs [d,d,d
                           x,x,d
-                          o,d,d]).toString().should.equal(
-      """|X|O|X| ║ |X|O|X| ║ |X|O|X|
-         |O|O|X| ║ |O|O|X| ║ |O|O|X|
-         |X|X|O| ║ |X|X|O| ║ |X|X|O|
-         ════════╬═════════╬════════
-         |X|O|O| ║ |X|O|O| ║ |X|O|X|
-         | |X| | ║ | |X| | ║ |O|O|X|
-         | | |X| ║ | | |X| ║ |X|X|O|
-         ════════╬═════════╬════════
-         |X|X|O| ║ |X|O|X| ║ |X|O|X|
-         | |O| | ║ |O|O|X| ║ |O|O|X|
-         |O| |X| ║ |X|X|O| ║ |X|X|O|"""
-     )
+                          o,d,d]).
+      toString().should.equal(
+        """|X|O|X| ║ |X|O|X| ║ |X|O|X|
+           |O|O|X| ║ |O|O|X| ║ |O|O|X|
+           |X|X|O| ║ |X|X|O| ║ |X|X|O|
+           ════════╬═════════╬════════
+           |X|O|O| ║ |X|O|O| ║ |X|O|X|
+           | |X| | ║ | |X| | ║ |O|O|X|
+           | | |X| ║ | | |X| ║ |X|X|O|
+           ════════╬═════════╬════════
+           |X|X|O| ║ |X|O|X| ║ |X|O|X|
+           | |O| | ║ |O|O|X| ║ |O|O|X|
+           |O| |X| ║ |X|X|O| ║ |X|X|O|"""
+       )
 
   it 'isWin should find out if a player won', ->
 
