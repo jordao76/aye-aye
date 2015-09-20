@@ -2,7 +2,7 @@
 
 (require 'chai').should()
 {MinimaxAgent} = require '../../src/minimax'
-{_, X, O, TicTacToeState, MisereTicTacToeState} = require '../../src/games/tic-tac-toe'
+{_, X, O, TicTacToe, MisereTicTacToe} = require '../../src/games/tic-tac-toe'
 
 minimax = new MinimaxAgent
 
@@ -19,14 +19,14 @@ describe 'minimax strategy - tic tac toe', ->
 
   it 'should end in a draw for initial conditions', ->
 
-    state = new TicTacToeState
+    state = new TicTacToe
     state = play state
     state.isWin(X).should.be.false
     state.isWin(O).should.be.false
 
   it 'X should win given the right conditions', ->
 
-    state = new TicTacToeState [_,O,_
+    state = new TicTacToe [_,O,_
                                 _,X,_
                                 _,_,_], X
     state = playTurn state
@@ -54,7 +54,7 @@ describe 'minimax strategy - tic tac toe', ->
 
   it 'O should win given the right conditions', ->
 
-    state = new TicTacToeState [_,X,_
+    state = new TicTacToe [_,X,_
                                 _,O,_
                                 _,_,_], O
     state = play state
@@ -66,7 +66,7 @@ describe 'minimax strategy - tic tac toe', ->
 
   it 'Oh misère', ->
 
-    state = new MisereTicTacToeState [O,O,X
+    state = new MisereTicTacToe [O,O,X
                                       O,X,X
                                       _,_,_], X
     state = playTurn state

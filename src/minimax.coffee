@@ -14,14 +14,16 @@
 
 class MinimaxAgent
   constructor: (@depth = Infinity) ->
+    @rootAgent = MAX
 
   # nextAction :: (state:State) -> Action
   nextAction: (state) ->
+    @rootAgent = state.nextAgent()
     [_, bestAction] = @minimax state
     bestAction
 
   minimax: (state, ply = 0, α = -Infinity, β = +Infinity) ->
-    ++ply if not state.isTerminal() and state.nextAgent() is MAX
+    ++ply if not state.isTerminal() and state.nextAgent() is @rootAgent
     if ply > @depth or state.isTerminal()
       [state.utility(), null]
     else if state.nextAgent() is MAX

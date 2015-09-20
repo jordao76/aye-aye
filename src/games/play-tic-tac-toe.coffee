@@ -1,13 +1,14 @@
 # coffeelint: disable=max_line_length
 
 chalk = require 'chalk'
-{_, X, O, Board, TicTacToeState} = require './tic-tac-toe'
+{_, X, O, Board, TicTacToe} = require './tic-tac-toe'
+{UltimateTicTacToe} = require './ultimate-tic-tac-toe'
 {MinimaxAgent} = require '../minimax'
 
 log = console.log
 write = (args...) -> process.stdout.write args...
 
-game = new TicTacToeState
+game = new TicTacToe
 agent = new MinimaxAgent 3
 lastAction = null
 
@@ -25,20 +26,20 @@ Board::toString = ->
   v = chalk.dim '|'
   h = chalk.dim '-----------'
   p = (i) =>
-    if @ps[i] is _
+    if @a[i] is _
       chalk.dim i
     else if lastAction.i is i
-      chalk.inverse.bold @ps[i]
+      chalk.inverse.bold @a[i]
     else
-      chalk.bold @ps[i]
+      chalk.bold @a[i]
   """ #{p 0} #{v} #{p 1} #{v} #{p 2}
       #{h}
        #{p 3} #{v} #{p 4} #{v} #{p 5}
       #{h}
        #{p 6} #{v} #{p 7} #{v} #{p 8}"""
 
-TicTacToeState::parseAction = (text) -> parseInt text, 10
-TicTacToeState::isValidAction = (action) -> action in @openPositions()
+TicTacToe::parseAction = (text) -> parseInt text, 10
+TicTacToe::isValidAction = (action) -> action in @openPositions()
 
 printHeader = ->
   log chalk.yellow.bold """ _____ _        _____            _____
@@ -73,7 +74,9 @@ humanPlays = (i) ->
   log 'You played ' + lastAction.toString()
 
 computerPlays = ->
+  console.time 'In'
   [lastAction, game] = playTurn agent, game
+  console.timeEnd 'In'
   log 'I played ' + lastAction.toString()
 
 input = (text) ->
