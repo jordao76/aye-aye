@@ -27,8 +27,8 @@ describe 'minimax strategy - tic tac toe', ->
   it 'X should win given the right conditions', ->
 
     state = new TicTacToe [_,O,_
-                                _,X,_
-                                _,_,_], X
+                           _,X,_
+                           _,_,_], X
     state = playTurn state
     state.toString().should.equal """|X|O| |
                                      | |X| |

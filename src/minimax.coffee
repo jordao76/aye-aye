@@ -6,7 +6,7 @@
 
 # State :: {
 #   isTerminal : -> Bool
-#   nextAgent : -> Agent
+#   nextAgent : -> MAX|MIN
 #   utility : -> Num
 #   possibleActions : -> [Action]
 #   play : Action -> State
@@ -23,8 +23,9 @@ class MinimaxAgent
     bestAction
 
   minimax: (state, ply = 0, α = -Infinity, β = +Infinity) ->
-    ++ply if not state.isTerminal() and state.nextAgent() is @rootAgent
-    if ply > @depth or state.isTerminal()
+    isTerminal = state.isTerminal()
+    ++ply if not isTerminal and state.nextAgent() is @rootAgent
+    if ply > @depth or isTerminal
       [state.utility(), null]
     else if state.nextAgent() is MAX
       @maxi state, ply, α, β

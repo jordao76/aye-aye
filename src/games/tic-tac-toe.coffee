@@ -11,7 +11,7 @@ class Board
   columns: (a=@a) -> ([a[i],a[i+3],a[i+6]] for i in [0...3])
   diagonals: (a=@a) -> [[a[0],a[4],a[8]], [a[2],a[4],a[6]]]
   lines: (a=@a) -> [(@rows a)..., (@columns a)..., (@diagonals a)...]
-  isTerminal: (a=@a) -> (@isWin X, a) or (@isWin O, a) or (@isFull a)
+  isTerminal: (a=@a) -> (@isFull a) or (@isWin X, a) or (@isWin O, a)
   isWin: (who, a=@a) -> (@lines a).some (l) -> l.every (e) -> e is who
   isFull: (a=@a) -> a.every (e) -> e isnt _
   openPositions: (a=@a) -> (i for e, i in a when e is _)
@@ -30,10 +30,7 @@ class C14n
      a[7],a[4],a[1]
      a[8],a[5],a[2]]
   rotations: (a) ->
-    r1 = @rotate a
-    r2 = @rotate r1
-    r3 = @rotate r2
-    [a, r1, r2, r3]
+    [a, (r1 = @rotate a), (r2 = @rotate r1), @rotate r2]
   flip: (a) ->
     [a[2],a[1],a[0]
      a[5],a[4],a[3]
@@ -58,8 +55,6 @@ class C14n
       unless seen[key]
         res.push action
         seen[key] = yes
-    [la,lc] = [actions.length,res.length]
-    #process.stdout.write if lc<la then '+' else '.' #DEBUG!
     res
 
 # -------------------------------------------------------
@@ -82,7 +77,10 @@ class TicTacToe extends Board
   utility: -> ticTacToeEvaluate @a
   opponent: (who = @nextPlayer) -> if who is X then O else X
 
+evals = {}
 ticTacToeEvaluate = (a) ->
+  b = c14n.bin a
+  return evals[b] if evals[b]?
   score = 0
   for l in Board::lines a
     [x, o] = [0, 0]
@@ -90,7 +88,7 @@ ticTacToeEvaluate = (a) ->
       ++x if w is X
       ++o if w is O
     score += 10**x - 10**o if x is 0 or o is 0
-  score
+  evals[b] = score
 
 # -------------------------------------------------------
 
