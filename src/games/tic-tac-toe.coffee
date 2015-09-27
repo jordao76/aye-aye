@@ -74,7 +74,13 @@ class TicTacToe extends Board
     c14n.canonicalizeActions (@action i for i in @openPositions())
   action: (i) -> new TicTacToeAction i, (@mark i, @nextPlayer)
   play: (action) -> new @constructor action.a, @opponent(), @depth + 1
-  utility: -> ticTacToeEvaluate @a
+  utility: ->
+    if @isWin X
+      2000
+    else if @isWin O
+      -2000
+    else
+      ticTacToeEvaluate @a
   opponent: (who = @nextPlayer) -> if who is X then O else X
 
 evals = {}

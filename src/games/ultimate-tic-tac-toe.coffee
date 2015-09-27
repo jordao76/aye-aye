@@ -1,116 +1,117 @@
 # coffeelint: disable=max_line_length
 
-{_, X, O, rows, lines, empty, Board, ticTacToeEvaluate} = require './tic-tac-toe'
+{ MAX, MIN } = require '../minimax'
+{
+  _, X, O, decode
+  empty
+  bin, at, rows, columns, diagonals, lines
+  isWin, isTerminal
+  evaluate
+  BinTicTacToe
+} = require './bin-tic-tac-toe'
 
 e = empty
+
 ultimateEmpty = [e,e,e
                  e,e,e
                  e,e,e]
-class UltimateBoard extends Board
-  constructor: (a = ultimateEmpty) -> super a
-  isWin: (who, a=@a) -> (@lines a).some (l) => l.every (b) => super who, b
-  isFull: (a=@a) -> a.every (a) => super a
-  mark: (i, j, who, a=@a) -> [a[0...i]..., (super j, who, a[i]), a[i+1..]...]
-  toString: (a=@a) ->
-    s = ''
-    for bri in [0..2] # bri = board row index
-      bs = (@rows a)[bri]
-      for ri in [0..2] # ri = row index within a board
-        s += ("|#{((@rows b)[ri]).join '|'}|" for b in bs).join ' ║ '
-        s += '\n' if bri < 2 or ri < 2
-      s += '════════╬═════════╬════════\n' if bri < 2
-    s
 
-# -------------------------------------------------------
+rowsU = (a) -> (a[i...i+3] for i in [0...3*3] by 3)
+columnsU = (a) -> ([a[i],a[i+3],a[i+6]] for i in [0...3])
+diagonalsU = (a) -> [[a[0],a[4],a[8]], [a[2],a[4],a[6]]]
+linesU = (a) -> [(rowsU a)..., (columnsU a)..., (diagonalsU a)...]
 
-{C14n} = require './tic-tac-toe'
+isWinU = (a, W) ->
+  for l in linesU a
+    if (l.every (v) -> isWin v, W)
+      return yes
+  no
 
-class UC14n extends C14n
-  constructor: ->
-    super
-    i = +Infinity
-    @maxBin = [i,i,i,i,i,i,i,i,i]
-  rotate: (a) ->
-    [(super a[6]),(super a[3]),(super a[0])
-     (super a[7]),(super a[4]),(super a[1])
-     (super a[8]),(super a[5]),(super a[2])]
-  flip: (a) ->
-    [(super a[2]),(super a[1]),(super a[0])
-     (super a[5]),(super a[4]),(super a[3])
-     (super a[8]),(super a[7]),(super a[6])]
-  bin: (a) ->
-    res = [0,0,0,0,0,0,0,0,0]
-    for b, i in a
-      for e, j in b
-        res[i] |= @value[e] << (j*2)
-    res
+class UltimateTicTacToe
 
-# -------------------------------------------------------
+  constructor: (@a = ultimateEmpty, @nextPlayer = X, @lastPlayedPosition = 4, @depth = 0) ->
 
-{MAX, MIN} = require '../minimax'
+  rows: -> rowsU @a
+  columns: -> columnsU @a
+  diagonals: -> diagonalsU @a
+  lines: -> linesU @a
 
-# ULTIMATE TIC TAC TOE
+  isTerminal: ->
+    (@possibleActions().length is 0) or (@isWin X) or (@isWin O)
 
-uc14n = new UC14n
-
-class UltimateTicTacToeAction
-  constructor: (@i, @j, @a) ->
-  toString: -> "#{@i},#{@j}"
-
-class UltimateTicTacToe extends UltimateBoard
-
-  constructor: (a = ultimateEmpty, @nextPlayer = X, @lastPlayedPosition = 4, @depth = 0) ->
-    super a
+  isWin: (W) -> isWinU @a, W
 
   nextAgent: -> if @nextPlayer is X then MAX else MIN
   opponent: (who = @nextPlayer) -> if who is X then O else X
 
   # get boards for next play, returns :: list of board indexes
   boardsForNextPlay: ->
-    b = if @lastPlayedPosition? then @a[@lastPlayedPosition] else null
-    if b? and !(Board::isTerminal b)
+    v = if @lastPlayedPosition? then @a[@lastPlayedPosition] else null
+    if v? and !(isTerminal v)
       # the board derived from the last played position is available
       [@lastPlayedPosition]
     else
       # all available board indexes
-      (i for b, i in @a when !(Board::isTerminal b))
+      res = []
+      for v, i in @a
+        unless isTerminal v
+          res.push i
+      res
 
   openPositions: ->
     # get open positions for the boards
     # returns :: list of [board index, list of open positions for board]
-    ([i, (Board::openPositions @a[i])] for i in @boardsForNextPlay())
+    res = []
+    for i in @boardsForNextPlay()
+      v = @a[i]
+      js = []
+      for j in [0...18] by 2
+        if (0b11 << j & v) is 0 # the position is open, b11 is X|O
+          js.push j / 2
+      res.push [i, js]
+    res
 
   possibleActions: ->
-    actions = []
+    return @actions if @actions?
+    res = []
     for [i, js] in @openPositions()
       for j in js
-        actions.push @action i, j
-    uc14n.canonicalizeActions actions
-    #actions
+        res.push [i, j]
+    @actions = res
 
-  action: (i, j) -> new UltimateTicTacToeAction i, j, @mark(i, j, @nextPlayer)
-
-  play: (action) ->
-    new @constructor action.a, @opponent(), action.j, @depth + 1
+  play: ([i, j]) ->
+    a = @a.slice()
+    a[i] = @nextPlayer << (j*2) | a[i]
+    new @constructor a, @opponent(), j, @depth + 1
 
   utility: ->
     score = 0
-    for l in @lines()
+    for l in linesU @a
       [i, j, k] = [0, 0, 0]
-      for b in l
-        if Board::isWin X, b
+      for v in l
+        if isWin v, X
           ++i
-        else if Board::isWin O, b
+        else if isWin v, O
           ++j
-        k += ticTacToeEvaluate b
+        k += evaluate v
       score += 1000**i - 1000**j if i is 0 or j is 0
       score += k
     score
 
+  toString: ->
+    s = ''
+    for bri in [0..2] # bri = board row index
+      vs = @rows()[bri]
+      for ri in [0..2] # ri = row index within a board
+        strRows = ("|#{(decode e for e in (rows v)[ri]).join '|'}|" for v in vs)
+        s += strRows.join ' ║ '
+        s += '\n' if bri < 2 or ri < 2
+      s += '════════╬═════════╬════════\n' if bri < 2
+    s
+
 # EXPORTS
 
 module.exports = {
-  UltimateBoard
+  _, X, O, bin
   UltimateTicTacToe
-  UC14n
 }
