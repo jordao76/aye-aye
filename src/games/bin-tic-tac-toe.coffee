@@ -69,12 +69,20 @@ isWin = (v, W) ->
 isTerminal = (v) ->
   (isFull v) or (isWin v, X) or (isWin v, O)
 
+openPositions = (v) ->
+  (i for i in [0...9] when (0b11 << (i*2) & v) is 0)
+
 allPlays = (v, W) ->
   res = []
   for i in [0...18] by 2
     if (0b11 << i & v) is 0 # the position is open, b11 is X|O
       res.push W << i | v
   res
+
+changedOn = (v1, v2) ->
+  for i in [0...18]
+    if (0b11 << (i*2) & v1) isnt (0b11 << (i*2) & v2)
+      return i
 
 utility = (v) ->
   if isWin v, X
@@ -111,12 +119,15 @@ class BinTicTacToe
   isWin: (W) -> isWin @value, W
   isTerminal: -> isTerminal @value
   nextAgent: -> if @nextPlayer is X then MAX else MIN
+  openPositions: -> openPositions @value
   possibleActions: -> allPlays @value, @nextPlayer
+  action: (i) -> @nextPlayer << (i*2) | @value
+  positionForAction: (action) -> changedOn @value, action
   play: (value) -> new @constructor value, @opponent(), @depth + 1
   utility: -> utility @value
   opponent: (who = @nextPlayer) -> if who is X then O else X
   toString: ->
-    ("|#{(decode(e) for e in r).join '|'}|" for r in @rows()).join "\n"
+    ("|#{(decode e for e in r).join '|'}|" for r in @rows()).join "\n"
 
 module.exports = {
   _, X, O, decode

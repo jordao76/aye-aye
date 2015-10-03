@@ -22,32 +22,32 @@ class MinimaxAgent
     [_, bestAction] = @minimax state
     bestAction
 
-  minimax: (state, ply = 0, α = -Infinity, β = +Infinity) ->
+  minimax: (state, α = -Infinity, β = +Infinity, ply = 0) ->
     isTerminal = state.isTerminal()
     ++ply if not isTerminal and state.nextAgent() is @rootAgent
     if ply > @depth or isTerminal
       [state.utility(), null]
     else if state.nextAgent() is MAX
-      @maxi state, ply, α, β
+      @maxi state, α, β, ply
     else
-      @mini state, ply, α, β
+      @mini state, α, β, ply
 
-  maxi: (state, ply, α, β) ->
+  maxi: (state, α, β, ply) ->
     [v, a] = [-Infinity, null]
     for action in state.possibleActions()
       successor = state.play(action)
-      [nextValue, _] = @minimax successor, ply, α, β
+      [nextValue, _] = @minimax successor, α, β, ply
       if nextValue > v
         [v, a] = [nextValue, action]
       return [v, a] if v >= β
       α = Math.max α, v
     [v, a]
 
-  mini: (state, ply, α, β) ->
+  mini: (state, α, β, ply) ->
     [v, a] = [+Infinity, null]
     for action in state.possibleActions()
       successor = state.play(action)
-      [nextValue, _] = @minimax successor, ply, α, β
+      [nextValue, _] = @minimax successor, α, β, ply
       if nextValue < v
         [v, a] = [nextValue, action]
       return [v, a] if v <= α
