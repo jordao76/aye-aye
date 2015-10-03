@@ -10,8 +10,7 @@ write = (args...) -> process.stdout.write args...
 
 game = new BinTicTacToe
 agent = new MinimaxAgent 3
-lastAction = null
-lastPosition = null
+position = null # position of the last play
 
 # Agent :: {
 #   nextAction : (State) -> Action
@@ -29,7 +28,7 @@ BinTicTacToe::toString = ->
   p = (i) =>
     if @at(i) is _
       chalk.dim i
-    else if lastPosition is i
+    else if position is i
       chalk.inverse.bold decode @at i
     else
       chalk.bold decode @at i
@@ -73,23 +72,16 @@ prompt = ->
 humanPlays = (i) ->
   action = game.action i
   game = game.play action
-  lastAction = action
-  lastPosition = i
-  log 'You played ' + lastPosition
+  position = i
+  log 'You played ' + position
 
 computerPlays = ->
   console.time 'In'
   [action, nextGame] = playTurn agent, game
-  lastPosition = game.positionForAction action
-  [lastAction, game] = [action, nextGame]
   console.timeEnd 'In'
-  log 'I played ' + lastPosition
-
-  do -> # play continuously
-    return
-    log game.toString()
-    finish() if game.isTerminal()
-    computerPlays()
+  position = game.positionForAction action
+  game = nextGame
+  log 'I played ' + position
 
 input = (text) ->
   action = game.parseAction text
@@ -102,9 +94,6 @@ input = (text) ->
   else
     computerPlays()
 
-printHeader()
-prompt()
-
 process.stdin.resume()
 process.stdin.setEncoding 'utf8'
 process.stdin.on 'data', (text) ->
@@ -112,3 +101,6 @@ process.stdin.on 'data', (text) ->
   input text.trim().toLowerCase()
   log ''
   prompt()
+
+printHeader()
+prompt()
