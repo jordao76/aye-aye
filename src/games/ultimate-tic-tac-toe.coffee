@@ -31,6 +31,8 @@ class UltimateTicTacToe
 
   constructor: (@a = ultimateEmpty, @nextPlayer = X, @lastPlayedPosition = 4, @depth = 0) ->
 
+  at: (i, j) -> at @a[i], j
+
   rows: -> rowsU @a
   columns: -> columnsU @a
   diagonals: -> diagonalsU @a
@@ -71,6 +73,8 @@ class UltimateTicTacToe
       res.push [i, js]
     res
 
+  action: (ij) -> ij
+
   possibleActions: ->
     return @actions if @actions?
     res = []
@@ -83,6 +87,8 @@ class UltimateTicTacToe
     a = @a.slice()
     a[i] = @nextPlayer << (j*2) | a[i]
     new @constructor a, @opponent(), j, @depth + 1
+
+  positionForAction: (action) -> action
 
   utility: ->
     score = 0
@@ -109,9 +115,7 @@ class UltimateTicTacToe
       s += '════════╬═════════╬════════\n' if bri < 2
     s
 
-# EXPORTS
-
 module.exports = {
-  _, X, O, bin
+  _, X, O, bin # re-exports
   UltimateTicTacToe
 }
