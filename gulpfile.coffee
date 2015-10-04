@@ -18,7 +18,7 @@ gulp.task 'lint', ->
 
 gulp.task 'test', ['lint'], ->
   gulp.src './test/**/*.coffee'
-    .pipe $.mocha reporter: 'nyan'
+    .pipe $.mocha()
     .on 'error', onError
 
 gulp.task 'compile', ['test'], ->

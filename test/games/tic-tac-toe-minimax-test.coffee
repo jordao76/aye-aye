@@ -14,9 +14,9 @@ play = (state) ->
     state = playTurn state
   state
 
-testTicTacToe = (game, _, X, O) ->
+testTicTacToe = (str, game, _, X, O) ->
 
-  describe 'minimax strategy - tic tac toe', ->
+  describe "minimax strategy - #{str}", ->
 
     it 'should end in a draw for initial conditions', ->
 
@@ -46,12 +46,12 @@ testTicTacToe = (game, _, X, O) ->
 do ->
   {_, X, O, TicTacToe} = require '../../src/games/tic-tac-toe'
   game = (args...) -> new TicTacToe args...
-  testTicTacToe game, _, X, O
+  testTicTacToe 'TicTacToe', game, _, X, O
 
 do ->
   {_, X, O, BinTicTacToe} = require '../../src/games/bin-tic-tac-toe'
   game = (args...) -> BinTicTacToe.create args...
-  testTicTacToe game, _, X, O
+  testTicTacToe 'BinTicTacToe', game, _, X, O
 
 describe 'minimax strategy - tic tac toe', ->
 
