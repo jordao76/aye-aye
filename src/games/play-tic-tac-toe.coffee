@@ -48,7 +48,7 @@ prompt = ->
     log ''
     finish() if game.isTerminal()
     write "#{chalk.blue.bold decode game.nextPlayer} plays. "
-    log "Enter a position like #{chalk.blue.bold 'A1'}; or #{chalk.blue.bold '<ENTER>'} for me to play. #{chalk.blue.bold 'q'} quits."
+    log "Enter a position like #{chalk.blue.bold 'A1'}, or #{chalk.blue.bold '<ENTER>'} for me to play. #{chalk.blue.bold 'q'} quits."
   write '> '
 
 humanPlays = (i) ->
@@ -56,12 +56,16 @@ humanPlays = (i) ->
   game = game.play action
   Game.position = i
 
-computerPlays = ->
+computerPlays = (alone = false) ->
   console.time 'time'
   [action, nextGame] = playTurn agent, game
   console.timeEnd 'time'
   Game.position = game.positionForAction action
   game = nextGame
+  if alone
+    log game.toString()
+    finish() if game.isTerminal()
+    computerPlays yes
 
 input = (text) ->
   action = game.parseAction text
@@ -69,6 +73,8 @@ input = (text) ->
     humanPlays action
   else if text in ['bye', 'exit', 'quit', 'q']
     finish()
+  else if text in ['alone']
+    computerPlays yes
   else if text
     log chalk.red.bold 'Bad play: ' + text
   else
