@@ -134,7 +134,7 @@ module.exports = {
   empty
   bin, at, rows, columns, diagonals, lines
   isFull, isWin, isTerminal
-  allPlays
+  openPositions, allPlays, changedOn
   utility, evaluate
   BinTicTacToe
 }
