@@ -7,7 +7,7 @@ should = (require 'chai').should()
   bin, at, rows, columns, diagonals, lines
   isFull, isWin, isTerminal
   openPositions, allPlays, changedOn
-  utility, evaluate
+  discountedUtility, utility, evaluate
   BinTicTacToe
 } = require '../../src/games/bin-tic-tac-toe'
 
@@ -143,23 +143,35 @@ describe 'bin tic tac toe operations', ->
 
   describe 'utility', ->
     it 'should return maximum score for wins', ->
-      (utility bin [X,O,O,
+      (utility bin [X,O,O
                     O,X,O
                     O,O,X]).should.equal 2000
-      (utility bin [O,O,O,
+      (utility bin [O,O,O
                     X,X,O
                     O,X,X]).should.equal -2000
     it 'should return score estimate for unfinished games', ->
-      (utility bin [_,_,_,
+      (utility bin [_,_,_
                     _,X,_
                     _,_,_]).should.be.within 10, 100
-      (utility bin [_,_,_,
+      (utility bin [_,_,_
                     _,O,_
                     _,_,_]).should.be.within -100, -10
-      (utility bin [X,O,_,
+      (utility bin [X,O,_
                     _,X,_
                     _,_,_]).should.be.within 100, 1000
     it 'should return score of zero for draws', ->
-      (utility bin [O,X,O,
+      (utility bin [O,X,O
                     X,X,O
                     X,O,X]).should.equal 0
+
+  describe 'discountedUtility', ->
+    it 'should discount future utilities', ->
+      v = bin [O,X,_
+               _,X,_
+               _,_,_]
+      u0 = discountedUtility v, 0
+      u0.should.equal (utility v)
+      u1 = discountedUtility v, 1
+      u0.should.be.above u1
+      u2 = discountedUtility v, 2
+      u1.should.be.above u2

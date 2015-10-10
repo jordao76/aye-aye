@@ -1,7 +1,9 @@
 chalk = require 'chalk'
-{_, X, O, decode, BinTicTacToe} = require './bin-tic-tac-toe'
+{_, X, O, decode, discountedUtility, BinTicTacToe} = require './bin-tic-tac-toe'
 
 BinTicTacToe.position = null # last played position
+
+BinTicTacToe::utility = () -> discountedUtility @value, @depth
 
 BinTicTacToe::toString = ->
   t = chalk.yellow '┏━━━┳━━━┳━━━┓'

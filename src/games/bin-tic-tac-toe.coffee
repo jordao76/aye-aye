@@ -88,6 +88,10 @@ changedOn = (v1, v2) ->
     if (0b11 << (i*2) & v1) isnt (0b11 << (i*2) & v2)
       return i
 
+γ = 0.1 # discount factor (gamma)
+discountedUtility = (v, depth = 0) ->
+  γ**depth * utility v
+
 utility = (v) ->
   if isWin v, X
     2000
@@ -113,7 +117,7 @@ evaluate = (v) ->
 class BinTicTacToe
   @create: (a = [_,_,_,_,_,_,_,_,_], args...) ->
     new BinTicTacToe (bin a), args...
-  constructor: (@value = empty, @nextPlayer = X) ->
+  constructor: (@value = empty, @nextPlayer = X, @depth = 0) ->
   at: (i) -> at @value, i
   rows: -> rows @value
   columns: -> columns @value
@@ -127,7 +131,7 @@ class BinTicTacToe
   possibleActions: -> allPlays @value, @nextPlayer
   action: (i) -> @nextPlayer << (i*2) | @value
   positionForAction: (action) -> changedOn @value, action
-  play: (value) -> new @constructor value, @opponent()
+  play: (value) -> new @constructor value, @opponent(), @depth + 1
   utility: -> utility @value
   opponent: (W = @nextPlayer) -> opponent W
   toString: ->
@@ -139,6 +143,6 @@ module.exports = {
   bin, at, rows, columns, diagonals, lines
   isFull, isWin, isTerminal
   openPositions, allPlays, changedOn
-  utility, evaluate
+  discountedUtility, utility, evaluate
   BinTicTacToe
 }
