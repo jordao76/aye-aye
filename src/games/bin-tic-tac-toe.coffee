@@ -6,6 +6,10 @@
 # each position takes 2 bits, for a total of 2 * 9 = 18 needed bits
 [_, X, O] = [0b00, 0b01, 0b10]
 
+# note: 0b11 is X|O
+
+opponent = (W) -> ~W & 0b11
+
 decode = (W) -> { 0b00: ' ', 0b01: 'X', 0b10: 'O' }[W] or throw new Error W
 
 # empty board
@@ -42,7 +46,7 @@ lines = (v) ->
 
 isFull = (v) ->
   for i in [0...18] by 2
-    if (0b11 << i & v) is 0 # the position is open, b11 is X|O
+    if (0b11 << i & v) is 0 # the position is open
       return no
   yes
 
@@ -109,7 +113,7 @@ evaluate = (v) ->
 class BinTicTacToe
   @create: (a = [_,_,_,_,_,_,_,_,_], args...) ->
     new BinTicTacToe (bin a), args...
-  constructor: (@value = empty, @nextPlayer = X, @depth = 0) ->
+  constructor: (@value = empty, @nextPlayer = X) ->
   at: (i) -> at @value, i
   rows: -> rows @value
   columns: -> columns @value
@@ -123,14 +127,14 @@ class BinTicTacToe
   possibleActions: -> allPlays @value, @nextPlayer
   action: (i) -> @nextPlayer << (i*2) | @value
   positionForAction: (action) -> changedOn @value, action
-  play: (value) -> new @constructor value, @opponent(), @depth + 1
+  play: (value) -> new @constructor value, @opponent()
   utility: -> utility @value
-  opponent: (who = @nextPlayer) -> if who is X then O else X
+  opponent: (W = @nextPlayer) -> opponent W
   toString: ->
     ("|#{(decode e for e in r).join '|'}|" for r in @rows()).join "\n"
 
 module.exports = {
-  _, X, O, decode
+  _, X, O, opponent, decode
   empty
   bin, at, rows, columns, diagonals, lines
   isFull, isWin, isTerminal

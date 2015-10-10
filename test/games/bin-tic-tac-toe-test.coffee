@@ -2,7 +2,7 @@
 
 should = (require 'chai').should()
 {
-  _, X, O, decode
+  _, X, O, opponent, decode
   empty
   bin, at, rows, columns, diagonals, lines
   isFull, isWin, isTerminal
@@ -37,6 +37,11 @@ describe 'bin tic tac toe operations', ->
       (decode X).should.equal 'X'
       (decode O).should.equal 'O'
       (-> decode X|O).should.throw Error # not representable
+
+  describe 'opponent', ->
+    it 'should give the player opponent', ->
+      (opponent X).should.equal O
+      (opponent O).should.equal X
 
   describe 'bin', ->
     it 'should convert an array of positions (a board) into a single packed binary number', ->
