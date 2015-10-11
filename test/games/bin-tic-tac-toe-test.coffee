@@ -6,7 +6,7 @@ should = (require 'chai').should()
   empty
   bin, at, rows, columns, diagonals, lines
   isFull, isWin, isTerminal
-  openPositions, allPlays, changedOn
+  openPositions, allPlays, changedOn, winOn
   discountedUtility, utility, evaluate
   BinTicTacToe
 } = require '../../src/games/bin-tic-tac-toe'
@@ -138,8 +138,31 @@ describe 'bin tic tac toe operations', ->
     it 'should detect the first position where 2 values differ', ->
       (changedOn (bin [_,_,_,_,_,_,_,_,_]), (bin [_,X,_,_,_,_,_,_,_])).should.equal 1
       (changedOn (bin [_,X,_,_,_,_,_,_,_]), (bin [_,X,_,_,_,_,_,O,_])).should.equal 7
-    it 'should return undefined if there\'s no change', ->
-      should.not.exist changedOn (bin [_,X,_,_,_,_,_,_,_]), (bin [_,X,_,_,_,_,_,_,_])
+    it 'should return null if there\'s no change', ->
+      ((changedOn (bin [_,X,_,_,_,_,_,_,_]), (bin [_,X,_,_,_,_,_,_,_])) is null).should.be.true
+
+  describe 'winOn', ->
+    it 'should return the positions of a win', ->
+      (winOn bin [X,X,X,_,_,_,_,_,_]).should.deep.equal [0, 1, 2]
+      (winOn bin [O,O,O,_,_,_,_,_,_]).should.deep.equal [0, 1, 2]
+      (winOn bin [_,_,_,X,X,X,_,_,_]).should.deep.equal [3, 4, 5]
+      (winOn bin [_,_,_,O,O,O,_,_,_]).should.deep.equal [3, 4, 5]
+      (winOn bin [_,_,_,_,_,_,X,X,X]).should.deep.equal [6, 7, 8]
+      (winOn bin [_,_,_,_,_,_,O,O,O]).should.deep.equal [6, 7, 8]
+      (winOn bin [X,_,_,X,_,_,X,_,_]).should.deep.equal [0, 3, 6]
+      (winOn bin [O,_,_,O,_,_,O,_,_]).should.deep.equal [0, 3, 6]
+      (winOn bin [_,X,_,_,X,_,_,X,_]).should.deep.equal [1, 4, 7]
+      (winOn bin [_,O,_,_,O,_,_,O,_]).should.deep.equal [1, 4, 7]
+      (winOn bin [_,_,X,_,_,X,_,_,X]).should.deep.equal [2, 5, 8]
+      (winOn bin [_,_,O,_,_,O,_,_,O]).should.deep.equal [2, 5, 8]
+      (winOn bin [X,_,_,_,X,_,_,_,X]).should.deep.equal [0, 4, 8]
+      (winOn bin [O,_,_,_,O,_,_,_,O]).should.deep.equal [0, 4, 8]
+      (winOn bin [_,_,X,_,X,_,X,_,_]).should.deep.equal [2, 4, 6]
+      (winOn bin [_,_,O,_,O,_,O,_,_]).should.deep.equal [2, 4, 6]
+    it 'should return an empty array if there\' no win', ->
+      (winOn bin [_,_,_,_,_,_,_,_,_]).should.deep.equal []
+      (winOn bin [O,_,_,_,X,_,_,_,O]).should.deep.equal []
+      (winOn d).should.deep.equal []
 
   describe 'utility', ->
     it 'should return maximum score for wins', ->

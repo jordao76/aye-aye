@@ -5,7 +5,7 @@
   _, X, O, decode
   empty
   bin, at, rows, columns, diagonals, lines
-  isWin, isTerminal
+  isWin, winOn, isTerminal
   evaluate
   BinTicTacToe
 } = require './bin-tic-tac-toe'
@@ -42,6 +42,7 @@ class UltimateTicTacToe
     (@possibleActions().length is 0) or (@isWin X) or (@isWin O)
 
   isWin: (W) -> isWinU @a, W
+  winOn: (i) -> winOn @a[i]
 
   nextAgent: -> if @nextPlayer is X then MAX else MIN
   opponent: (who = @nextPlayer) -> if who is X then O else X

@@ -53,22 +53,36 @@ isFull = (v) ->
 masks =
   # masks for when X (b01) wins
   0b01: [
-    0b010101000000000000, 0b000000010101000000, 0b000000000000010101, # rows
-    0b010000010000010000, 0b000100000100000100, 0b000001000001000001, # columns
+    0b000000000000010101, 0b000000010101000000, 0b010101000000000000 # rows
+    0b000001000001000001, 0b000100000100000100, 0b010000010000010000 # columns
     0b010000000100000001, 0b000001000100010000 # diagonals
   ]
   # masks for when O (b10) wins
   0b10: [
-    0b101010000000000000, 0b000000101010000000, 0b000000000000101010, # rows
-    0b100000100000100000, 0b001000001000001000, 0b000010000010000010, # columns
+    0b000000000000101010, 0b000000101010000000, 0b101010000000000000 # rows
+    0b000010000010000010, 0b001000001000001000, 0b100000100000100000 # columns
     0b100000001000000010, 0b000010001000100000 # diagonals
   ]
+# the positions for the masks above, with matching indexes
+positions = [
+  [0,1,2], [3,4,5], [6,7,8]
+  [0,3,6], [1,4,7], [2,5,8]
+  [0,4,8], [2,4,6]
+]
 
 isWin = (v, W) ->
   ms = masks[W] or throw new Error W
   for m in ms
     return yes if (m & v) is m
   no
+
+winOn = (v) ->
+  w = (W) ->
+    ms = masks[W]
+    for m, i in ms
+      return positions[i] if (m & v) is m
+    null
+  (w X) or (w O) or []
 
 isTerminal = (v) ->
   (isFull v) or (isWin v, X) or (isWin v, O)
@@ -87,6 +101,7 @@ changedOn = (v1, v2) ->
   for i in [0...18]
     if (0b11 << (i*2) & v1) isnt (0b11 << (i*2) & v2)
       return i
+  null
 
 γ = 0.1 # discount factor (gamma)
 discountedUtility = (v, depth = 0) ->
@@ -106,7 +121,7 @@ evaluateCache = {}
 evaluate = (v) ->
   return evaluateCache[v] if evaluateCache[v]?
   score = 0
-  for l in (lines v)
+  for l in lines v
     [x, o] = [0, 0]
     for w in l
       ++x if w is X
@@ -125,6 +140,7 @@ class BinTicTacToe
   lines: -> lines @value
   isFull: -> isFull @value
   isWin: (W) -> isWin @value, W
+  winOn: -> winOn @value
   isTerminal: -> isTerminal @value
   nextAgent: -> if @nextPlayer is X then MAX else MIN
   openPositions: -> openPositions @value
@@ -142,7 +158,7 @@ module.exports = {
   empty
   bin, at, rows, columns, diagonals, lines
   isFull, isWin, isTerminal
-  openPositions, allPlays, changedOn
+  openPositions, allPlays, changedOn, winOn
   discountedUtility, utility, evaluate
   BinTicTacToe
 }

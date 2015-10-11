@@ -11,11 +11,14 @@ BinTicTacToe::toString = ->
   h = chalk.yellow '┣━━━╋━━━╋━━━┫'
   b = chalk.yellow '┗━━━┻━━━┻━━━┛'
   l = (s) -> chalk.dim s
+  wins = @winOn()
   p = (i) =>
     if (@at i) is _
       ' '
     else if BinTicTacToe.position is i
       chalk.red.bold decode @at i
+    else if i in wins
+      chalk.cyan.bold decode @at i
     else
       chalk.bold decode @at i
   """         #{l 1}   #{l 2}   #{l 3}

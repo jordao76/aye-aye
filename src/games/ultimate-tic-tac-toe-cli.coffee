@@ -4,7 +4,10 @@ chalk = require 'chalk'
 {_, X, O, decode} = require './bin-tic-tac-toe'
 {UltimateTicTacToe} = require './ultimate-tic-tac-toe'
 
-UltimateTicTacToe.position = null # last played position
+# last played position as a tuple [i,j]
+# i is the board index
+# j is the position index within the board
+UltimateTicTacToe.position = null
 
 UltimateTicTacToe::toString = ->
   t = chalk.yellow  '╔═══════════╦═══════════╦═══════════╗'
@@ -15,10 +18,13 @@ UltimateTicTacToe::toString = ->
   b = chalk.yellow  '╚═══════════╩═══════════╩═══════════╝'
   l = (s) -> chalk.dim s
   p = (i, j) =>
+    wins = @winOn i
     if (@at i, j) is _
-      ' ' #chalk.grey '█'
+      ' '
     else if UltimateTicTacToe.position[0] is i and UltimateTicTacToe.position[1] is j
       chalk.red.bold decode (@at i, j)
+    else if j in wins
+      chalk.cyan.bold decode (@at i, j)
     else
       chalk.bold decode (@at i, j)
   """         #{l 1}   #{l 2}   #{l 3}   #{l 4}   #{l 5}   #{l 6}   #{l 7}   #{l 8}   #{l 9}

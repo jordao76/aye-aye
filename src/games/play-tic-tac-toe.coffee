@@ -58,10 +58,12 @@ humanPlays = (i) ->
   Game.position = i
 
 computerPlays = (alone = false) ->
-  console.time 'time'
-  agent = if game.nextPlayer is X then computerX else computerO
+  player = game.nextPlayer
+  str = "#{decode player} took"
+  console.time str
+  agent = if player is X then computerX else computerO
   [action, nextGame] = playTurn agent, game
-  console.timeEnd 'time'
+  console.timeEnd str
   Game.position = game.positionForAction action
   game = nextGame
   if alone
