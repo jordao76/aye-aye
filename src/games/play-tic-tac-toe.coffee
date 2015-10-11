@@ -10,7 +10,8 @@ write = (args...) -> process.stdout.write args...
 
 Game = null
 game = null
-agent = new MinimaxAgent 3
+computerX = new MinimaxAgent 3
+computerO = new MinimaxAgent 3
 
 # Agent :: {
 #   nextAction : (State) -> Action
@@ -58,6 +59,7 @@ humanPlays = (i) ->
 
 computerPlays = (alone = false) ->
   console.time 'time'
+  agent = if game.nextPlayer is X then computerX else computerO
   [action, nextGame] = playTurn agent, game
   console.timeEnd 'time'
   Game.position = game.positionForAction action

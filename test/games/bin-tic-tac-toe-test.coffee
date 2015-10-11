@@ -170,7 +170,7 @@ describe 'bin tic tac toe operations', ->
                _,X,_
                _,_,_]
       u0 = discountedUtility v, 0
-      u0.should.equal (utility v)
+      u0.should.equal (utility v) # no discount when depth is zero
       u1 = discountedUtility v, 1
       u0.should.be.above u1
       u2 = discountedUtility v, 2
