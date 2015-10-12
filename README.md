@@ -5,25 +5,19 @@
 [![devDependency Status](https://david-dm.org/jordao76/aye-aye/dev-status.svg)](https://david-dm.org/jordao76/aye-aye#info=devDependencies)
 [![License](http://img.shields.io/:license-mit-blue.svg)](https://github.com/jordao76/aye-aye/blob/master/LICENSE.txt)
 
-Simple AI code. Minimax and tic-tac-toe...
+Simple AI code. Minimax for now, with some tic tac toe...
 
 ![aye-aye](http://upload.wikimedia.org/wikipedia/commons/6/6e/Aye-aye.png)
 
 Nothing to do with that lemur...
 
-## Simple CLI to play tic-tac-toe
+Check out [tic-tac-toe-cli](https://github.com/jordao76/tic-tac-toe-cli).
 
-There's a simple CLI to play tic-tac-toe. Clone the repo, cd into it, then:
+## Install
 
 ```
-$ npm install
-...
-$ node_modules/.bin/gulp
-...
-$ node lib/games/play-tic-tac-toe.js
+$ npm install --save aye-aye
 ```
-
-You'll need [node.js](https://nodejs.org/en/).
 
 ## License
 
