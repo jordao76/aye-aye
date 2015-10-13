@@ -35,7 +35,7 @@ class MinimaxAgent
   maxi: (state, α, β, ply) ->
     [v, a] = [-Infinity, null]
     for action in state.possibleActions()
-      successor = state.play(action)
+      successor = state.play action
       [nextValue, _] = @minimax successor, α, β, ply
       if nextValue > v
         [v, a] = [nextValue, action]
@@ -46,7 +46,7 @@ class MinimaxAgent
   mini: (state, α, β, ply) ->
     [v, a] = [+Infinity, null]
     for action in state.possibleActions()
-      successor = state.play(action)
+      successor = state.play action
       [nextValue, _] = @minimax successor, α, β, ply
       if nextValue < v
         [v, a] = [nextValue, action]
