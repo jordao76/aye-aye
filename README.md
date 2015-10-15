@@ -1,5 +1,6 @@
 # Aye-aye
 
+[![npm](https://img.shields.io/npm/v/aye-aye.svg)](https://www.npmjs.com/package/aye-aye)
 [![Build Status](https://travis-ci.org/jordao76/aye-aye.svg)](https://travis-ci.org/jordao76/aye-aye)
 [![Dependency Status](https://david-dm.org/jordao76/aye-aye.svg)](https://david-dm.org/jordao76/aye-aye)
 [![devDependency Status](https://david-dm.org/jordao76/aye-aye/dev-status.svg)](https://david-dm.org/jordao76/aye-aye#info=devDependencies)
