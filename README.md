@@ -12,7 +12,7 @@ Simple AI code. Minimax with some tic tac toe...
 
 Nothing to do with that lemur...
 
-Check out [tic-tac-toe-cli](https://github.com/jordao76/tic-tac-toe-cli).
+Check out [ultimate-tic-tac-toe](https://github.com/jordao76/ultimate-tic-tac-toe) and [tic-tac-toe-cli](https://github.com/jordao76/tic-tac-toe-cli).
 
 ## Intro
 
