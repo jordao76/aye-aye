@@ -1,9 +1,9 @@
-# Aye-aye
+# Aye-aye [![npm](https://img.shields.io/npm/v/aye-aye.svg)](https://www.npmjs.com/package/aye-aye)
 
-[![npm](https://img.shields.io/npm/v/aye-aye.svg)](https://www.npmjs.com/package/aye-aye)
 [![Build Status](https://travis-ci.org/jordao76/aye-aye.svg)](https://travis-ci.org/jordao76/aye-aye)
 [![Dependency Status](https://david-dm.org/jordao76/aye-aye.svg)](https://david-dm.org/jordao76/aye-aye)
 [![devDependency Status](https://david-dm.org/jordao76/aye-aye/dev-status.svg)](https://david-dm.org/jordao76/aye-aye#info=devDependencies)
+[![Codacy Badge](https://api.codacy.com/project/badge/grade/a970fdf8aed14f5fb1c84f5525b886ca)](https://www.codacy.com/app/rodrigo-jordao/aye-aye)
 [![License](http://img.shields.io/:license-mit-blue.svg)](https://github.com/jordao76/aye-aye/blob/master/LICENSE.txt)
 
 Simple AI code. Minimax with some tic tac toe...
