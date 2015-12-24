@@ -18,7 +18,7 @@ constraints = [
 ]
 csp =
   variables: [WA, NT, Q, NSW, V, SA]
-  domain: colors
+  domains: colors for i in [0...6] # same domain for all variables
   constraints: constraints
 
 describe 'CSP solver', ->

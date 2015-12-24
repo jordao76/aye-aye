@@ -7,8 +7,8 @@ class ConstraintSolver
   #   relation : (var1, ...)@arity n -> Bool
   # }
   # csp :: { # constraint satisfaction problem
-  #   variables : [String] # set of variables
-  #   domain : [Value] # primitive values like String, Number or Boolean; same domain for all variables
+  #   variables : [String]@length n # set of variables
+  #   domains : [[Value]]@length n # Value :: primitive value like String, Number or Boolean
   #   constraints : [Constraint]
   # }
   constructor: (@csp) ->
@@ -56,6 +56,6 @@ class ConstraintSolver
       return variable unless variable in assigned
 
   domainValues: (variable, assignment) ->
-    @csp.domain
+    @csp.domains[@csp.variables.indexOf variable]
 
 module.exports = {ConstraintSolver}
