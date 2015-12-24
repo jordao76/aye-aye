@@ -3,23 +3,40 @@
 (require 'chai').should()
 {ConstraintSolver} = require '../src/csp'
 
+[WA, NT, Q, NSW, V, SA] = ['WA', 'NT', 'Q', 'NSW', 'V', 'SA']
+colors = ['red', 'green', 'blue']
+disjointRelation = (c1, c2) -> c1 isnt c2
+constraints = [
+  { variables: [WA, NT], relation: disjointRelation }
+  { variables: [WA, SA], relation: disjointRelation }
+  { variables: [NT, Q], relation: disjointRelation }
+  { variables: [SA, Q], relation: disjointRelation }
+  { variables: [Q, NSW], relation: disjointRelation }
+  { variables: [SA, NSW], relation: disjointRelation }
+  { variables: [SA, V], relation: disjointRelation }
+  { variables: [NSW, V], relation: disjointRelation }
+]
+csp =
+  variables: [WA, NT, Q, NSW, V, SA]
+  domain: colors
+  constraints: constraints
+
 describe 'CSP solver', ->
 
-  it 'should solve a map coloring problem with 2 regions and 2 colors', ->
+  it 'should solve Australia\'s map coloring problem', ->
 
-    region1 = '1'
-    region2 = '2'
-    regions = [region1, region2] # variables
-    colors = ['red', 'blue'] # domain
-    disjointConstraint = # the regions shall not be painted by the same color
-      variables: [region1, region2]
-      relation: (region1Color, region2Color) -> region1Color isnt region2Color
+    solution = new ConstraintSolver(csp).solve()
+    # check that all variables were assigned a color
+    for variable in [WA, NT, Q, NSW, V, SA]
+      colors.should.include solution[variable]
+    # check the constraints
+    solution[WA].should.not.equal solution[NT]
+    solution[WA].should.not.equal solution[SA]
+    solution[NT].should.not.equal solution[Q]
+    solution[SA].should.not.equal solution[Q]
+    solution[Q].should.not.equal solution[NSW]
+    solution[SA].should.not.equal solution[NSW]
+    solution[SA].should.not.equal solution[V]
+    solution[NSW].should.not.equal solution[V]
 
-    csp =
-      variables: regions
-      domain: colors
-      constraints: [disjointConstraint]
-
-    new ConstraintSolver(csp).solve().should.deep.equal
-      "#{region1}": 'red'
-      "#{region2}": 'blue'
+module.exports = {AustraliaCSP: csp}

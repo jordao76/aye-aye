@@ -18,7 +18,7 @@ play = (Game, depth = Infinity) ->
 play BinTicTacToe
 play TicTacToe
 
-describe 'Benchmarks', ->
+describe 'Tic-tac-toe benchmarks', ->
   @timeout 60*1000
   new Benchmark.Suite()
     .add 'BinTicTacToe', -> play BinTicTacToe
