@@ -4,26 +4,30 @@
 Benchmark = require 'benchmark'
 {MinimaxAgent} = require '../../src/minimax'
 {TicTacToe} = require '../../src/games/tic-tac-toe'
-{_,X,O,BinTicTacToe} = require '../../src/games/bin-tic-tac-toe'
+{BinTicTacToe} = require '../../src/games/bin-tic-tac-toe'
 {UltimateTicTacToe} = require '../../src/games/ultimate-tic-tac-toe'
 
-play = (Game, depth = Infinity) ->
-  agent = new MinimaxAgent depth
-  state = new Game
-  until state.isTerminal()
-    state = state.play agent.nextAction state
-  state
-
-# warm up
-play BinTicTacToe
-play TicTacToe
+run = (s, f) ->
+  new Benchmark.Suite()
+    .add s, f
+    .on 'cycle', (e) -> it e.target, ->
+    .run async: false
 
 describe 'Tic-tac-toe benchmarks', ->
   @timeout 60*1000
-  new Benchmark.Suite()
-    .add 'BinTicTacToe', -> play BinTicTacToe
-    .add 'TicTacToe', -> play TicTacToe
-    #.add 'UltimateTicTacToe depth 2', -> play UltimateTicTacToe, 2
-    .on 'cycle', (e) -> it e.target, ->
-    .run async: false
-  it 'would be good to compare to older commits'
+
+  runGame = (Game, description, depth, step = 20) ->
+    agent = new MinimaxAgent depth
+    playTurn = (state) -> state.play agent.nextAction state
+    describe description, ->
+      state = new Game
+      turn = 0
+      until state.isTerminal()
+        run "minimax depth #{depth} play turn after #{turn} turns", -> playTurn state
+        for i in [0...step]
+          turn++
+          state = playTurn state unless state.isTerminal()
+
+  runGame TicTacToe, 'TicTacToe', Infinity
+  runGame BinTicTacToe, 'BinTicTacToe', Infinity
+  runGame UltimateTicTacToe, 'UltimateTicTacToe', 2

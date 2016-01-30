@@ -17,12 +17,12 @@ gulp.task 'lint', ->
     .pipe $.coffeelint.reporter 'failOnWarning'
 
 gulp.task 'test', ['lint'], ->
-  gulp.src ['./test/**/*.coffee', '!./test/**/perf*.coffee']
+  gulp.src ['./test/**/*.coffee', '!./test/**/*-benchmark.coffee']
     .pipe $.mocha()
     .on 'error', onError
 
 gulp.task 'perf', ->
-  gulp.src './test/**/perf*.coffee'
+  gulp.src './test/**/*-benchmark.coffee'
     .pipe $.mocha()
     .on 'error', onError
 
