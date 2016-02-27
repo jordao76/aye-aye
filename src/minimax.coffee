@@ -1,6 +1,6 @@
 # MINIMAX
 
-[MAX, MIN] = ['MAX', 'MIN']
+[MAX, MIN] = [1, 2]
 
 # Action :: Any
 
@@ -12,8 +12,10 @@
 #   play : Action -> State
 # }
 
+Limit = 2000000000 # two billion, faster than using Infinity
+
 class MinimaxAgent
-  constructor: (@depth = Infinity) ->
+  constructor: (@depth = Limit) ->
     @rootAgent = MAX
 
   # nextAction :: (state:State) -> Action
@@ -22,7 +24,7 @@ class MinimaxAgent
     [_, bestAction] = @minimax state
     bestAction
 
-  minimax: (state, α = -Infinity, β = +Infinity, ply = 0) ->
+  minimax: (state, α = -Limit, β = +Limit, ply = 0) ->
     isTerminal = state.isTerminal()
     ++ply if not isTerminal and state.nextAgent() is @rootAgent
     if ply > @depth or isTerminal
@@ -33,7 +35,7 @@ class MinimaxAgent
       @mini state, α, β, ply
 
   maxi: (state, α, β, ply) ->
-    [v, a] = [-Infinity, null]
+    [v, a] = [-Limit, null]
     for action in state.possibleActions()
       successor = state.play action
       [nextValue, _] = @minimax successor, α, β, ply
@@ -44,7 +46,7 @@ class MinimaxAgent
     [v, a]
 
   mini: (state, α, β, ply) ->
-    [v, a] = [+Infinity, null]
+    [v, a] = [+Limit, null]
     for action in state.possibleActions()
       successor = state.play action
       [nextValue, _] = @minimax successor, α, β, ply
@@ -54,4 +56,4 @@ class MinimaxAgent
       β = Math.min β, v
     [v, a]
 
-module.exports = { MAX, MIN, MinimaxAgent }
+module.exports = { MAX, MIN, Limit, MinimaxAgent }
