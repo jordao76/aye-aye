@@ -61,7 +61,6 @@ class MonteCarloAgent
         node = @select node
       node = lastNode # last node added to the game is the leaf
 
-      before = node
       node = @expand node, game unless node.isTerminal() # expand from the leaf node if it's not a terminal node
       result = @simulate node
       for node in game
