@@ -41,6 +41,12 @@ class UltimateTicTacToe
   isTerminal: ->
     (@possibleActions().length is 0) or (@isWin X) or (@isWin O)
 
+  winner: ->
+    switch
+      when @isWin X then X
+      when @isWin O then O
+      else null
+
   isWin: (W) -> isWinU @a, W
   winOn: (i) -> winOn @a[i]
 

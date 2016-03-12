@@ -1,6 +1,7 @@
 # MINIMAX
 
-[MAX, MIN] = [1, 2]
+{P1, P2} = require './game'
+[MAX, MIN] = [P1, P2]
 
 # Action :: Any
 
@@ -12,7 +13,7 @@
 #   play : Action -> State
 # }
 
-Limit = 2000000000 # two billion, faster than using Infinity
+Limit = Number.MAX_SAFE_INTEGER
 
 class MinimaxAgent
   constructor: (@depth = Limit) ->

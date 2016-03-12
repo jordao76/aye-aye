@@ -140,6 +140,11 @@ class BinTicTacToe
   lines: -> lines @value
   isFull: -> isFull @value
   isWin: (W) -> isWin @value, W
+  winner: ->
+    switch
+      when @isWin X then X
+      when @isWin O then O
+      else null
   winOn: -> winOn @value
   isTerminal: -> isTerminal @value
   nextAgent: -> if @nextPlayer is X then MAX else MIN
