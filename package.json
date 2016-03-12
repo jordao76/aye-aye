@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/jordao76/aye-aye",
   "devDependencies": {
-    "benchmark": "^1.0.0",
+    "benchmark": "^2.1.0",
     "chai": "^3.2.0",
     "coffee-script": "^1.10.0",
     "del": "^2.0.1",
