@@ -4,7 +4,7 @@
 {MonteCarloAgent} = require '../../src/monte-carlo'
 
 # note that it's not a guarantee that Monte Carlo will win in the following
-# situations, and so the tests just exercises the algorithm without asserting any outcome
+# situations, and so the tests just exercise the algorithm without asserting any outcome
 monteCarlo = new MonteCarloAgent timeFrameMs: 50
 
 playTurn = (state) ->
